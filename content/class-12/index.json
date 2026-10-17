@@ -1,0 +1,415 @@
+[
+  {
+    "subject": "Physics",
+    "unit": 1,
+    "topic": "Unit 1: Electrostatics",
+    "weightage": 12,
+    "file": "content/class-12/physics/01-electrostatics.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 2,
+    "topic": "Unit 2: Current Electricity",
+    "weightage": 10,
+    "file": "content/class-12/physics/02-current-electricity.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 3,
+    "topic": "Unit 3: Electromagnetism",
+    "weightage": 10,
+    "file": "content/class-12/physics/03-electromagnetism.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 4,
+    "topic": "Unit 4: Electromagnetic Induction",
+    "weightage": 12,
+    "file": "content/class-12/physics/04-electromagnetic-induction.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 5,
+    "topic": "Unit 5: Alternating Current (AC Circuits)",
+    "weightage": 10,
+    "file": "content/class-12/physics/05-alternating-current.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 6,
+    "topic": "Unit 6: Physics of Solids",
+    "weightage": 7,
+    "file": "content/class-12/physics/06-physics-of-solids.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 7,
+    "topic": "Unit 7: Electronics and Operational Amplifiers",
+    "weightage": 7,
+    "file": "content/class-12/physics/07-electronics.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 8,
+    "topic": "Unit 8: Dawn of Modern Physics",
+    "weightage": 10,
+    "file": "content/class-12/physics/08-dawn-of-modern-physics.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 9,
+    "topic": "Unit 9: Atomic Spectra",
+    "weightage": 10,
+    "file": "content/class-12/physics/09-atomic-spectra.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 10,
+    "topic": "Unit 10: Nuclear Physics",
+    "weightage": 12,
+    "file": "content/class-12/physics/10-nuclear-physics.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 1,
+    "topic": "Unit 1: S and P Block Elements",
+    "weightage": 22,
+    "file": "content/class-12/chemistry/01-s-and-p-block-elements.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 2,
+    "topic": "Unit 2: D and F Block Elements",
+    "weightage": 6,
+    "file": "content/class-12/chemistry/02-d-and-f-block-elements.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 3,
+    "topic": "Unit 3: Organic Compounds",
+    "weightage": 3,
+    "file": "content/class-12/chemistry/03-organic-compounds.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 4,
+    "topic": "Unit 4: Hydrocarbons",
+    "weightage": 12,
+    "file": "content/class-12/chemistry/04-hydrocarbons.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 5,
+    "topic": "Unit 5: Alkyl Halides and Amines",
+    "weightage": 8,
+    "file": "content/class-12/chemistry/05-alkyl-halides-and-amines.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 6,
+    "topic": "Unit 6: Alcohols, Phenols and Ethers",
+    "weightage": 9,
+    "file": "content/class-12/chemistry/06-alcohols-phenols-and-ethers.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 7,
+    "topic": "Unit 7: Carbonyl Compounds I: Aldehydes and Ketones",
+    "weightage": 4,
+    "file": "content/class-12/chemistry/07-aldehydes-and-ketones.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 8,
+    "topic": "Unit 8: Carbonyl Compounds II: Carboxylic Acids",
+    "weightage": 6,
+    "file": "content/class-12/chemistry/08-carboxylic-acids.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 9,
+    "topic": "Unit 9: Biochemistry",
+    "weightage": 6,
+    "file": "content/class-12/chemistry/09-biochemistry.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 10,
+    "topic": "Unit 10: Industrial Chemistry",
+    "weightage": 6,
+    "file": "content/class-12/chemistry/10-industrial-chemistry.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 11,
+    "topic": "Unit 11: Environmental Chemistry",
+    "weightage": 6,
+    "file": "content/class-12/chemistry/11-environmental-chemistry.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 12,
+    "topic": "Unit 12: Analytical Chemistry",
+    "weightage": 12,
+    "file": "content/class-12/chemistry/12-analytical-chemistry.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 1,
+    "topic": "Chapter 1: Respiration",
+    "weightage": 8,
+    "file": "content/class-12/biology/01-respiration.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 2,
+    "topic": "Chapter 2: Homeostasis",
+    "weightage": 8,
+    "file": "content/class-12/biology/02-homeostasis.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 3,
+    "topic": "Chapter 3: Support and Movements",
+    "weightage": 8,
+    "file": "content/class-12/biology/03-support-and-movements.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 4,
+    "topic": "Chapter 4: Nervous Coordination",
+    "weightage": 8,
+    "file": "content/class-12/biology/04-nervous-coordination.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 5,
+    "topic": "Chapter 5: Chemical Coordination",
+    "weightage": 8,
+    "file": "content/class-12/biology/05-chemical-coordination.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 6,
+    "topic": "Chapter 6: Behaviour",
+    "weightage": 6,
+    "file": "content/class-12/biology/06-behaviour.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 7,
+    "topic": "Chapter 7: Reproduction",
+    "weightage": 8,
+    "file": "content/class-12/biology/07-reproduction.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 8,
+    "topic": "Chapter 8: Development and Ageing",
+    "weightage": 7,
+    "file": "content/class-12/biology/08-development-and-ageing.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 9,
+    "topic": "Chapter 9: Inheritance",
+    "weightage": 8,
+    "file": "content/class-12/biology/09-inheritance.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 10,
+    "topic": "Chapter 10: Chromosomes and DNA",
+    "weightage": 9,
+    "file": "content/class-12/biology/10-chromosomes-and-dna.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 11,
+    "topic": "Chapter 11: Evolution",
+    "weightage": 6,
+    "file": "content/class-12/biology/11-evolution.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 12,
+    "topic": "Chapter 12: Man and His Environment",
+    "weightage": 6,
+    "file": "content/class-12/biology/12-man-and-his-environment.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 13,
+    "topic": "Chapter 13: Biotechnology",
+    "weightage": 8,
+    "file": "content/class-12/biology/13-biotechnology.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 14,
+    "topic": "Chapter 14: Biology and Human Welfare",
+    "weightage": 8,
+    "file": "content/class-12/biology/14-biology-and-human-welfare.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 1,
+    "topic": "Unit 1: Introduction to Symbolic Package: Maple",
+    "weightage": 2,
+    "file": "content/class-12/mathematics/01-intro-to-maple.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 2,
+    "topic": "Unit 2: Function and Limits",
+    "weightage": 11,
+    "file": "content/class-12/mathematics/02-functions-and-limits.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 3,
+    "topic": "Unit 3: Differentiation",
+    "weightage": 11,
+    "file": "content/class-12/mathematics/03-differentiation.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 4,
+    "topic": "Unit 4: Higher Order Derivatives and Applications",
+    "weightage": 4,
+    "file": "content/class-12/mathematics/04-higher-order-derivatives.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 5,
+    "topic": "Unit 5: Differentiation of Vector Functions",
+    "weightage": 4,
+    "file": "content/class-12/mathematics/05-vector-functions-differentiation.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 6,
+    "topic": "Unit 6: Integration",
+    "weightage": 18,
+    "file": "content/class-12/mathematics/06-integration.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 7,
+    "topic": "Unit 7: Plane Analytic Geometry: Straight Line",
+    "weightage": 13,
+    "file": "content/class-12/mathematics/07-plane-analytic-geometry-straight-line.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 8,
+    "topic": "Unit 8: Conics I (Circles)",
+    "weightage": 5,
+    "file": "content/class-12/mathematics/08-conics-1.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 9,
+    "topic": "Unit 9: Conics II (Parabola, Ellipse, Hyperbola)",
+    "weightage": 12,
+    "file": "content/class-12/mathematics/09-conics-2.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 10,
+    "topic": "Unit 10: Differential Equations",
+    "weightage": 8,
+    "file": "content/class-12/mathematics/10-differential-equations.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 11,
+    "topic": "Unit 11: Partial Differentiation",
+    "weightage": 4,
+    "file": "content/class-12/mathematics/11-partial-differentiation.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 12,
+    "topic": "Unit 12: Introduction to Numerical Methods",
+    "weightage": 10,
+    "file": "content/class-12/mathematics/12-numerical-methods.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 1,
+    "topic": "Unit 1: Genesis of Islamic Republic of Pakistan",
+    "weightage": 10,
+    "file": "content/class-12/pakistan-studies/01-genesis-of-islamic-republic.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 2,
+    "topic": "Unit 2: Initial Problems of Pakistan",
+    "weightage": 10,
+    "file": "content/class-12/pakistan-studies/02-initial-problems-of-pakistan.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 3,
+    "topic": "Unit 3: Land of Pakistan (Geography and Climate)",
+    "weightage": 10,
+    "file": "content/class-12/pakistan-studies/03-land-of-pakistan.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 4,
+    "topic": "Unit 4: Steps towards an Islamic Republic of Pakistan",
+    "weightage": 10,
+    "file": "content/class-12/pakistan-studies/04-steps-towards-islamic-republic.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 5,
+    "topic": "Unit 5: Administrative Structure and Good Governance",
+    "weightage": 10,
+    "file": "content/class-12/pakistan-studies/05-administrative-structure.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 6,
+    "topic": "Unit 6: Culture of Pakistan",
+    "weightage": 8,
+    "file": "content/class-12/pakistan-studies/06-culture-of-pakistan.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 7,
+    "topic": "Unit 7: Languages of Pakistan",
+    "weightage": 8,
+    "file": "content/class-12/pakistan-studies/07-languages-of-pakistan.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 8,
+    "topic": "Unit 8: National Integration and Prosperity",
+    "weightage": 8,
+    "file": "content/class-12/pakistan-studies/08-national-integration.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 9,
+    "topic": "Unit 9: Economic Planning and Development",
+    "weightage": 10,
+    "file": "content/class-12/pakistan-studies/09-economic-planning.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 10,
+    "topic": "Unit 10: Foreign Policy of Pakistan",
+    "weightage": 10,
+    "file": "content/class-12/pakistan-studies/10-foreign-policy.md"
+  },
+  {
+    "subject": "Pakistan Studies",
+    "unit": 11,
+    "topic": "Unit 11: Problems of Pakistan and Their Solutions",
+    "weightage": 6,
+    "file": "content/class-12/pakistan-studies/11-problems-of-pakistan.md"
+  }
+]

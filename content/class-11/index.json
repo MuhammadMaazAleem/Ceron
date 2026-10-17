@@ -1,0 +1,387 @@
+[
+  {
+    "subject": "Physics",
+    "unit": 1,
+    "topic": "Unit 1: Measurement",
+    "weightage": 8,
+    "file": "content/class-11/physics/01-measurement.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 2,
+    "topic": "Unit 2: Vectors and Equilibrium",
+    "weightage": 10,
+    "file": "content/class-11/physics/02-vectors-and-equilibrium.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 3,
+    "topic": "Unit 3: Forces and Motion",
+    "weightage": 12,
+    "file": "content/class-11/physics/03-forces-and-motion.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 4,
+    "topic": "Unit 4: Work and Energy",
+    "weightage": 10,
+    "file": "content/class-11/physics/04-work-and-energy.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 5,
+    "topic": "Unit 5: Rotational and Circular Motion",
+    "weightage": 12,
+    "file": "content/class-11/physics/05-rotational-and-circular-motion.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 6,
+    "topic": "Unit 6: Fluid Dynamics",
+    "weightage": 8,
+    "file": "content/class-11/physics/06-fluid-dynamics.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 7,
+    "topic": "Unit 7: Oscillations",
+    "weightage": 9,
+    "file": "content/class-11/physics/07-oscillations.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 8,
+    "topic": "Unit 8: Waves",
+    "weightage": 12,
+    "file": "content/class-11/physics/08-waves.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 9,
+    "topic": "Unit 9: Physical Optics",
+    "weightage": 9,
+    "file": "content/class-11/physics/09-physical-optics.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 10,
+    "topic": "Unit 10: Thermodynamics",
+    "weightage": 10,
+    "file": "content/class-11/physics/10-thermodynamics.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 1,
+    "topic": "Unit 1: Stoichiometry",
+    "weightage": 8,
+    "file": "content/class-11/chemistry/01-stoichiometry.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 2,
+    "topic": "Unit 2: Atomic Structure",
+    "weightage": 8,
+    "file": "content/class-11/chemistry/02-atomic-structure.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 3,
+    "topic": "Unit 3: Theories of Covalent Bonding and Shapes of Molecules",
+    "weightage": 11,
+    "file": "content/class-11/chemistry/03-theories-of-covalent-bonding.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 4,
+    "topic": "Unit 4: States of Matter I: Gases",
+    "weightage": 12,
+    "file": "content/class-11/chemistry/04-states-of-matter-gases.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 5,
+    "topic": "Unit 5: States of Matter II: Liquids",
+    "weightage": 11,
+    "file": "content/class-11/chemistry/05-states-of-matter-liquids.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 6,
+    "topic": "Unit 6: States of Matter III: Solids",
+    "weightage": 7,
+    "file": "content/class-11/chemistry/06-states-of-matter-solids.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 7,
+    "topic": "Unit 7: Chemical Equilibrium",
+    "weightage": 7,
+    "file": "content/class-11/chemistry/07-chemical-equilibrium.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 8,
+    "topic": "Unit 8: Acids, Bases and Salts",
+    "weightage": 6,
+    "file": "content/class-11/chemistry/08-acids-bases-and-salts.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 9,
+    "topic": "Unit 9: Chemical Kinetics",
+    "weightage": 5,
+    "file": "content/class-11/chemistry/09-chemical-kinetics.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 10,
+    "topic": "Unit 10: Solutions and Colloids",
+    "weightage": 9,
+    "file": "content/class-11/chemistry/10-solutions-and-colloids.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 11,
+    "topic": "Unit 11: Thermochemistry",
+    "weightage": 8,
+    "file": "content/class-11/chemistry/11-thermochemistry.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 12,
+    "topic": "Unit 12: Electrochemistry",
+    "weightage": 8,
+    "file": "content/class-11/chemistry/12-electrochemistry.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 1,
+    "topic": "Chapter 1: Cell Structure and Function",
+    "weightage": 8,
+    "file": "content/class-11/biology/01-cell-structure-and-function.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 2,
+    "topic": "Chapter 2: Biological Molecules",
+    "weightage": 8,
+    "file": "content/class-11/biology/02-biological-molecules.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 3,
+    "topic": "Chapter 3: Enzymes",
+    "weightage": 7,
+    "file": "content/class-11/biology/03-enzymes.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 4,
+    "topic": "Chapter 4: Bioenergetics",
+    "weightage": 8,
+    "file": "content/class-11/biology/04-bioenergetics.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 5,
+    "topic": "Chapter 5: Acellular Life (Viruses)",
+    "weightage": 7,
+    "file": "content/class-11/biology/05-acellular-life.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 6,
+    "topic": "Chapter 6: Prokaryotes (Bacteria)",
+    "weightage": 8,
+    "file": "content/class-11/biology/06-prokaryotes.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 7,
+    "topic": "Chapter 7: Protista and Fungi",
+    "weightage": 8,
+    "file": "content/class-11/biology/07-protista-and-fungi.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 8,
+    "topic": "Chapter 8: Diversity among Plants",
+    "weightage": 9,
+    "file": "content/class-11/biology/08-diversity-among-plants.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 9,
+    "topic": "Chapter 9: Diversity among Animals",
+    "weightage": 9,
+    "file": "content/class-11/biology/09-diversity-among-animals.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 10,
+    "topic": "Chapter 10: Form and Functions in Plants",
+    "weightage": 8,
+    "file": "content/class-11/biology/10-form-and-functions-in-plants.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 11,
+    "topic": "Chapter 11: Digestion",
+    "weightage": 8,
+    "file": "content/class-11/biology/11-digestion.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 12,
+    "topic": "Chapter 12: Circulation",
+    "weightage": 8,
+    "file": "content/class-11/biology/12-circulation.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 13,
+    "topic": "Chapter 13: Immunity",
+    "weightage": 8,
+    "file": "content/class-11/biology/13-immunity.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 1,
+    "topic": "Unit 1: Complex Numbers",
+    "weightage": 6,
+    "file": "content/class-11/mathematics/01-complex-numbers.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 2,
+    "topic": "Unit 2: Matrices and Determinants",
+    "weightage": 15,
+    "file": "content/class-11/mathematics/02-matrices-and-determinants.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 3,
+    "topic": "Unit 3: Vectors in Space",
+    "weightage": 10,
+    "file": "content/class-11/mathematics/03-vectors.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 4,
+    "topic": "Unit 4: Sequences and Series (AP, GP, HP)",
+    "weightage": 6,
+    "file": "content/class-11/mathematics/04-sequences-and-series.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 5,
+    "topic": "Unit 5: Miscellaneous Series (Sigma Notation)",
+    "weightage": 3,
+    "file": "content/class-11/mathematics/05-miscellaneous-series.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 6,
+    "topic": "Unit 6: Permutation, Combination and Probability",
+    "weightage": 8,
+    "file": "content/class-11/mathematics/06-permutation-combination-probability.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 7,
+    "topic": "Unit 7: Mathematical Induction and Binomial Theorem",
+    "weightage": 8,
+    "file": "content/class-11/mathematics/07-mathematical-induction-binomial.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 8,
+    "topic": "Unit 8: Functions and Graphs",
+    "weightage": 9,
+    "file": "content/class-11/mathematics/08-functions-and-graphs.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 9,
+    "topic": "Unit 9: Linear Programming",
+    "weightage": 5,
+    "file": "content/class-11/mathematics/09-linear-programming.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 10,
+    "topic": "Unit 10: Trigonometric Identities of Sum & Difference",
+    "weightage": 8,
+    "file": "content/class-11/mathematics/10-trigonometric-identities.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 11,
+    "topic": "Unit 11: Application of Trigonometry",
+    "weightage": 7,
+    "file": "content/class-11/mathematics/11-application-of-trigonometry.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 12,
+    "topic": "Unit 12: Graphs of Trig Functions & Solutions of Equations",
+    "weightage": 15,
+    "file": "content/class-11/mathematics/12-graphs-and-trig-equations.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 1,
+    "topic": "Unit 1: Overview of Computer System",
+    "weightage": 12,
+    "file": "content/class-11/computer-science/01-overview-of-computer-system.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 2,
+    "topic": "Unit 2: Computer Memory and Storage",
+    "weightage": 12,
+    "file": "content/class-11/computer-science/02-computer-memory.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 3,
+    "topic": "Unit 3: Central Processing Unit Architecture",
+    "weightage": 14,
+    "file": "content/class-11/computer-science/03-cpu-architecture.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 4,
+    "topic": "Unit 4: Inside System Unit and Motherboard",
+    "weightage": 10,
+    "file": "content/class-11/computer-science/04-inside-system-unit.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 5,
+    "topic": "Unit 5: Network Communication and OSI Protocols",
+    "weightage": 15,
+    "file": "content/class-11/computer-science/05-network-protocols.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 6,
+    "topic": "Unit 6: Wireless Communications (4G/5G, Wi-Fi)",
+    "weightage": 11,
+    "file": "content/class-11/computer-science/06-wireless-communications.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 7,
+    "topic": "Unit 7: Database Fundamentals and Models",
+    "weightage": 13,
+    "file": "content/class-11/computer-science/07-database-fundamentals.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 8,
+    "topic": "Unit 8: Database Development and SQL",
+    "weightage": 13,
+    "file": "content/class-11/computer-science/08-database-development.md"
+  }
+]

@@ -1,0 +1,345 @@
+[
+  {
+    "subject": "Physics",
+    "unit": 1,
+    "topic": "Unit 1: Physical Quantities & Measurement",
+    "weightage": 10,
+    "file": "content/class-9/physics/01-physical-quantities-and-measurement.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 2,
+    "topic": "Unit 2: Kinematics",
+    "weightage": 12,
+    "file": "content/class-9/physics/02-kinematics.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 3,
+    "topic": "Unit 3: Dynamics",
+    "weightage": 12,
+    "file": "content/class-9/physics/03-dynamics.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 4,
+    "topic": "Unit 4: Turning Effect of Forces",
+    "weightage": 10,
+    "file": "content/class-9/physics/04-turning-effect-of-forces.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 5,
+    "topic": "Unit 5: Gravitation",
+    "weightage": 10,
+    "file": "content/class-9/physics/05-gravitation.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 6,
+    "topic": "Unit 6: Work and Power",
+    "weightage": 10,
+    "file": "content/class-9/physics/06-work-and-power.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 7,
+    "topic": "Unit 7: Properties of Matter",
+    "weightage": 12,
+    "file": "content/class-9/physics/07-properties-of-matter.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 8,
+    "topic": "Unit 8: Thermal Properties of Matter",
+    "weightage": 12,
+    "file": "content/class-9/physics/08-thermal-properties-of-matter.md"
+  },
+  {
+    "subject": "Physics",
+    "unit": 9,
+    "topic": "Unit 9: Transfer of Heat",
+    "weightage": 12,
+    "file": "content/class-9/physics/09-transfer-of-heat.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 1,
+    "topic": "Unit 1: Fundamentals of Chemistry",
+    "weightage": 10,
+    "file": "content/class-9/chemistry/01-fundamentals-of-chemistry.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 2,
+    "topic": "Unit 2: Structure of Atom",
+    "weightage": 10,
+    "file": "content/class-9/chemistry/02-structure-of-atom.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 3,
+    "topic": "Unit 3: Periodic Table and Periodicity of Properties",
+    "weightage": 10,
+    "file": "content/class-9/chemistry/03-periodic-table-and-periodicity.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 4,
+    "topic": "Unit 4: Structure of Molecules",
+    "weightage": 16,
+    "file": "content/class-9/chemistry/04-structure-of-molecules.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 5,
+    "topic": "Unit 5: Physical States of Matter",
+    "weightage": 10,
+    "file": "content/class-9/chemistry/05-physical-states-of-matter.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 6,
+    "topic": "Unit 6: Solutions",
+    "weightage": 14,
+    "file": "content/class-9/chemistry/06-solutions.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 7,
+    "topic": "Unit 7: Electrochemistry",
+    "weightage": 20,
+    "file": "content/class-9/chemistry/07-electrochemistry.md"
+  },
+  {
+    "subject": "Chemistry",
+    "unit": 8,
+    "topic": "Unit 8: Chemical Reactivity",
+    "weightage": 10,
+    "file": "content/class-9/chemistry/08-chemical-reactivity.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 1,
+    "topic": "Unit 1: Introduction to Biology",
+    "weightage": 6,
+    "file": "content/class-9/biology/01-introduction-to-biology.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 2,
+    "topic": "Unit 2: Solving Biological Problems",
+    "weightage": 6,
+    "file": "content/class-9/biology/02-solving-biological-problems.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 3,
+    "topic": "Unit 3: Biodiversity",
+    "weightage": 6,
+    "file": "content/class-9/biology/03-biodiversity.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 4,
+    "topic": "Unit 4: Cells and Tissues",
+    "weightage": 16,
+    "file": "content/class-9/biology/04-cells-and-tissues.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 5,
+    "topic": "Unit 5: Cell Cycle",
+    "weightage": 14,
+    "file": "content/class-9/biology/05-cell-cycle.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 6,
+    "topic": "Unit 6: Enzymes",
+    "weightage": 12,
+    "file": "content/class-9/biology/06-enzymes.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 7,
+    "topic": "Unit 7: Bio-Energetics",
+    "weightage": 14,
+    "file": "content/class-9/biology/07-bioenergetics.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 8,
+    "topic": "Unit 8: Nutrition",
+    "weightage": 12,
+    "file": "content/class-9/biology/08-nutrition.md"
+  },
+  {
+    "subject": "Biology",
+    "unit": 9,
+    "topic": "Unit 9: Transport",
+    "weightage": 14,
+    "file": "content/class-9/biology/09-transport.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 1,
+    "topic": "Unit 1: Matrices",
+    "weightage": 7,
+    "file": "content/class-9/mathematics/01-matrices.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 2,
+    "topic": "Unit 2: Real and Complex Numbers",
+    "weightage": 11,
+    "file": "content/class-9/mathematics/02-real-and-complex-numbers.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 3,
+    "topic": "Unit 3: Logarithm",
+    "weightage": 5,
+    "file": "content/class-9/mathematics/03-logarithm.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 4,
+    "topic": "Unit 4: Algebraic Expressions & Formulas",
+    "weightage": 9,
+    "file": "content/class-9/mathematics/04-algebraic-expressions-and-formulas.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 5,
+    "topic": "Unit 5: Factorization",
+    "weightage": 4,
+    "file": "content/class-9/mathematics/05-factorization.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 6,
+    "topic": "Unit 6: Algebraic Manipulation",
+    "weightage": 4,
+    "file": "content/class-9/mathematics/06-algebraic-manipulation.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 7,
+    "topic": "Unit 7: Linear Equations and Inequalities",
+    "weightage": 8,
+    "file": "content/class-9/mathematics/07-linear-equations-and-inequalities.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 8,
+    "topic": "Unit 8: Linear Graphs and Applications",
+    "weightage": 4,
+    "file": "content/class-9/mathematics/08-linear-graphs-and-applications.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 9,
+    "topic": "Unit 9: Introduction to Coordinate Geometry",
+    "weightage": 4,
+    "file": "content/class-9/mathematics/09-introduction-to-coordinate-geometry.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 10,
+    "topic": "Unit 10: Congruent Triangles",
+    "weightage": 4,
+    "file": "content/class-9/mathematics/10-congruent-triangles.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 11,
+    "topic": "Unit 11: Parallelograms and Triangles",
+    "weightage": 4,
+    "file": "content/class-9/mathematics/11-parallelograms-and-triangles.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 12,
+    "topic": "Unit 12: Line Bisector and Angle Bisector",
+    "weightage": 6,
+    "file": "content/class-9/mathematics/12-line-bisector-and-angle-bisector.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 13,
+    "topic": "Unit 13: Sides and Angles of a Triangle",
+    "weightage": 6,
+    "file": "content/class-9/mathematics/13-sides-and-angles-of-triangle.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 14,
+    "topic": "Unit 14: Ratio and Proportion",
+    "weightage": 6,
+    "file": "content/class-9/mathematics/14-ratio-and-proportion.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 15,
+    "topic": "Unit 15: Pythagoras Theorem",
+    "weightage": 6,
+    "file": "content/class-9/mathematics/15-pythagoras-theorem.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 16,
+    "topic": "Unit 16: Theorems Related with Area",
+    "weightage": 6,
+    "file": "content/class-9/mathematics/16-theorems-related-with-area.md"
+  },
+  {
+    "subject": "Mathematics",
+    "unit": 17,
+    "topic": "Unit 17: Practical Geometry Triangles",
+    "weightage": 6,
+    "file": "content/class-9/mathematics/17-practical-geometry-triangles.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 1,
+    "topic": "Unit 1: Fundamentals of Computer",
+    "weightage": 15,
+    "file": "content/class-9/computer-science/01-fundamentals-of-computer.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 2,
+    "topic": "Unit 2: Fundamentals of Operating System",
+    "weightage": 15,
+    "file": "content/class-9/computer-science/02-fundamentals-of-os.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 3,
+    "topic": "Unit 3: Office Automation",
+    "weightage": 25,
+    "file": "content/class-9/computer-science/03-office-automation.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 4,
+    "topic": "Unit 4: Data Communication",
+    "weightage": 20,
+    "file": "content/class-9/computer-science/04-data-communication.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 5,
+    "topic": "Unit 5: Computer Networks",
+    "weightage": 15,
+    "file": "content/class-9/computer-science/05-computer-networks.md"
+  },
+  {
+    "subject": "Computer Science",
+    "unit": 6,
+    "topic": "Unit 6: Computer Security and Ethics",
+    "weightage": 10,
+    "file": "content/class-9/computer-science/06-computer-security-and-ethics.md"
+  }
+]

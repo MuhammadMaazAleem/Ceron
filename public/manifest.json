@@ -1,0 +1,22 @@
+{
+  "name": "Ceron Learning Studio",
+  "short_name": "Ceron",
+  "description": "Private Family Learning Sanctuary for KP Textbook Board (KPTBB) & BISE Swat Curriculum",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F8FAFC",
+  "theme_color": "#F1F5F9",
+  "dir": "auto",
+  "lang": "en-PK",
+  "categories": ["education", "kids", "learning"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
