@@ -1,17 +1,29 @@
 {
-  "name": "Ceron Learning Studio",
+  "name": "Ceron Academic | BISE Swat",
   "short_name": "Ceron",
-  "description": "Private Family Learning Sanctuary for KP Textbook Board (KPTBB) & BISE Swat Curriculum",
+  "description": "Comprehensive Board Examination Platform for KPTBB & BISE Swat Curriculum (Classes 9th to 12th)",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#F8FAFC",
-  "theme_color": "#F1F5F9",
+  "background_color": "#0F172A",
+  "theme_color": "#4F46E5",
   "dir": "auto",
   "lang": "en-PK",
-  "categories": ["education", "kids", "learning"],
+  "categories": ["education", "academic", "learning"],
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/favicon.svg",
       "sizes": "any",

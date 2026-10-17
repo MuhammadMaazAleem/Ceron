@@ -2,7 +2,8 @@ import React from 'react';
 import { LearnerProfile } from '../../types';
 import { ALL_CLASSES } from '../../data/curriculumData';
 import { soundEngine } from '../../services/soundEngine';
-import { Volume2, VolumeX, Moon, Sun, Flame, Sparkles, BookOpen, Heart } from 'lucide-react';
+import { Volume2, VolumeX, Moon, Sun, Flame, Sparkles, BookOpen, Heart, Download } from 'lucide-react';
+import { InstallAppModal } from '../common/InstallAppModal';
 
 interface HeaderProps {
   activeProfile: LearnerProfile;
@@ -24,6 +25,31 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectClass,
 }) => {
   const [isMuted, setIsMuted] = React.useState(soundEngine.isMuted());
+  const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null);
+  const [isInstallModalOpen, setIsInstallModalOpen] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallClick = () => {
+    soundEngine.playPop();
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choice: any) => {
+        if (choice.outcome === 'accepted') {
+          setDeferredPrompt(null);
+        }
+      });
+    } else {
+      setIsInstallModalOpen(true);
+    }
+  };
 
   const handleToggleSound = () => {
     const next = soundEngine.toggleMute();
@@ -114,6 +140,22 @@ export const Header: React.FC<HeaderProps> = ({
             <span>{activeProfile.xp} XP</span>
           </div>
 
+          {/* Install / Download App Button */}
+          <button
+            onClick={handleInstallClick}
+            className="px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shadow-xs border"
+            style={{
+              backgroundColor: '#EEF2FF',
+              color: '#4F46E5',
+              borderColor: '#C7D2FE',
+            }}
+            title="Download / Install Ceron App on your phone or PC"
+          >
+            <Download size={13} className="text-indigo-600" />
+            <span className="hidden sm:inline">Install App</span>
+            <span className="sm:hidden">App</span>
+          </button>
+
           {/* Bilingual Toggle (EN | اردو) */}
           <button
             onClick={() => {
@@ -148,6 +190,18 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
       </div>
+
+      {/* PWA App Installation Guide & Trigger Modal */}
+      <InstallAppModal
+        isOpen={isInstallModalOpen}
+        onClose={() => setIsInstallModalOpen(false)}
+        hasNativePrompt={!!deferredPrompt}
+        onNativeInstall={() => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+          }
+        }}
+      />
     </header>
   );
 };
