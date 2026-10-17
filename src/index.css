@@ -379,11 +379,7 @@ p, span, h1, h2, h3, h4, h5, h6, a, button, label, li, td, th {
 .bg-red-800 { background-color: #991B1B !important; }
 .bg-red-900 { background-color: #7F1D1D !important; }
 
-/* Gradient Banner */
-.bg-gradient-to-r {
-  background: linear-gradient(135deg, #B91C1C 0%, #991B1B 45%, #1E1B4B 100%) !important;
-  color: #FFFFFF !important;
-}
+/* Red Backgrounds */
 
 /* Hover States */
 .hover\:bg-red-50:hover { background-color: #FEF2F2 !important; }

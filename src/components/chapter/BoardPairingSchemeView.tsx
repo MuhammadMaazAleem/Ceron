@@ -138,13 +138,23 @@ export const BoardPairingSchemeView: React.FC<BoardPairingSchemeViewProps> = ({
       </div>
 
       {/* 33% Pass Benchmark & 90%+ A-Grade Guide */}
-      <div className="pearl-card p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 flex items-start gap-3 text-xs">
+      <div
+        className="pearl-card p-4 border flex items-start gap-3 text-xs"
+        style={{
+          backgroundColor: '#FFFBEB',
+          borderColor: '#FDE68A',
+          color: '#78350F',
+        }}
+      >
         <Award size={20} className="text-amber-600 shrink-0 mt-0.5" />
         <div>
-          <div className="text-[11px] font-black uppercase text-amber-900 tracking-wider mb-1">
+          <div
+            className="text-[11px] font-black uppercase tracking-wider mb-1"
+            style={{ color: '#92400E' }}
+          >
             BISE Swat 33% Pass Standard vs 90%+ Distinction Tip
           </div>
-          <p className="text-amber-900 leading-relaxed font-sans">
+          <p className="leading-relaxed font-sans" style={{ color: '#78350F' }}>
             To clear the minimum 33% pass mark, focus on Solved Exercise Short Questions and standard definitions. 
             To score <strong>90%+ (A+ Grade)</strong>, practice the step-by-step numerical calculations with units and always sketch neat labeled pencil diagrams in Section C.
           </p>

@@ -485,13 +485,26 @@ export const BoardTutorWidget: React.FC<BoardTutorWidgetProps> = ({
 
             {/* Final Answer Highlight */}
             {activeResponse.finalAnswerEn && (
-              <div className="p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 flex items-start gap-2.5">
-                <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <div className="text-[10px] font-black uppercase text-emerald-800 tracking-wider mb-1">
+              <div
+                className="p-4 rounded-xl border flex items-start gap-3 shadow-xs"
+                style={{
+                  backgroundColor: '#ECFDF5',
+                  borderColor: '#A7F3D0',
+                  color: '#064E3B',
+                }}
+              >
+                <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <div
+                    className="text-[11px] font-black uppercase tracking-wider mb-1.5"
+                    style={{ color: '#047857' }}
+                  >
                     Final Answer — حتمی جواب بمعہ یونٹ
                   </div>
-                  <div className="text-sm font-bold text-emerald-900">
+                  <div
+                    className="text-sm sm:text-base font-bold leading-relaxed"
+                    style={{ color: '#064E3B' }}
+                  >
                     {activeResponse.finalAnswerEn}
                   </div>
                 </div>

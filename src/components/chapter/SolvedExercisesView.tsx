@@ -331,19 +331,39 @@ export const SolvedExercisesView: React.FC<SolvedExercisesViewProps> = ({
 
                   {/* Final Answer Highlight Box */}
                   {isNumerical && ex.finalAnswer && (
-                    <div className="p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div
+                      className="p-3.5 rounded-xl border flex items-center justify-between"
+                      style={{
+                        backgroundColor: '#ECFDF5',
+                        borderColor: '#A7F3D0',
+                        color: '#064E3B',
+                      }}
+                    >
+                      <div className="flex items-center gap-2.5">
                         <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
                         <div>
-                          <div className="text-[10px] font-black uppercase text-emerald-800 tracking-wider">
+                          <div
+                            className="text-[10px] font-black uppercase tracking-wider"
+                            style={{ color: '#047857' }}
+                          >
                             Final Answer (حتمی جواب بمعہ یونٹ)
                           </div>
-                          <div className="text-base font-black text-emerald-900 font-mono">
+                          <div
+                            className="text-base font-black font-mono"
+                            style={{ color: '#064E3B' }}
+                          >
                             {ex.finalAnswer}
                           </div>
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+                      <span
+                        className="text-[11px] font-bold px-2.5 py-1 rounded-full border"
+                        style={{
+                          backgroundColor: '#D1FAE5',
+                          color: '#065F46',
+                          borderColor: '#A7F3D0',
+                        }}
+                      >
                         Full Marks Secured ✓
                       </span>
                     </div>
