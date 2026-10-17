@@ -65,15 +65,19 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
         {/* Step-by-Step Device Instructions */}
         <div className="space-y-3 text-xs">
           {/* Android / Chrome */}
-          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-            <div className="flex items-center gap-2 font-bold text-slate-900 mb-1">
-              <Smartphone size={15} className="text-emerald-600" />
-              <span>Android (Google Chrome / Brave / Edge)</span>
+          <div className="p-3 bg-purple-50/60 rounded-xl border border-purple-200">
+            <div className="flex items-center gap-2 font-bold text-purple-900 mb-1">
+              <Smartphone size={15} className="text-purple-600" />
+              <span>Android (Full Standalone App - No Chrome Bars)</span>
             </div>
-            <ol className="list-decimal list-inside space-y-1 text-slate-600 pl-1">
-              <li>Tap the <strong>three dots menu (⋮)</strong> in the top-right corner.</li>
-              <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
-              <li>The app icon will appear on your phone home screen!</li>
+            <ol className="list-decimal list-inside space-y-1.5 text-slate-700 pl-1">
+              <li>Open directly in <strong>Google Chrome</strong> (if opened inside WhatsApp, tap ⋮ → <em>Open in Chrome</em>).</li>
+              <li>Tap the three dots (⋮) in Chrome and select <strong className="text-purple-700">"Install app"</strong> (or tap the purple button above).</li>
+              <li>
+                <span className="text-[11px] text-slate-500 block mt-0.5">
+                  <em>Tip:</em> Make sure to tap <strong>"Install app"</strong> (not basic bookmark shortcut). If you previously added an old shortcut, delete it and reinstall for the true full-screen experience.
+                </span>
+              </li>
             </ol>
           </div>
 
