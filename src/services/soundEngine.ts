@@ -6,11 +6,11 @@
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
-  private muted: boolean = false;
+  private muted: boolean = true;
 
   constructor() {
-    const saved = localStorage.getItem('ceron_sound_muted');
-    this.muted = saved === 'true';
+    this.muted = true;
+    localStorage.setItem('ceron_sound_muted', 'true');
   }
 
   private initContext() {

@@ -13,6 +13,10 @@ import { QuizRunner } from './components/quiz/QuizRunner';
 import { ChapterDetailView } from './components/chapter/ChapterDetailView';
 import { DedicationSplashModal } from './components/common/DedicationSplashModal';
 import { generate50McqQuizForUnit } from './services/aiQuizGenerator';
+import { SubjectAIPanel } from './components/tutor/SubjectAIPanel';
+import { CeronAIClaudeView } from './components/tutor/CeronAIClaudeView';
+import { AppTourVideoModal } from './components/common/AppTourVideoModal';
+import { ClassSelectionPortal } from './components/common/ClassSelectionPortal';
 
 export const App: React.FC = () => {
   const [activeProfile, setActiveProfile] = useState<LearnerProfile>(StorageService.getActiveProfile());
@@ -20,8 +24,14 @@ export const App: React.FC = () => {
   const [languagePref, setLanguagePref] = useState<'en' | 'ur'>('en');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
+  // Class Selection Screen (Shown on first visit or when user clicks Change Class)
+  const [isSelectingClass, setIsSelectingClass] = useState<boolean>(
+    () => !localStorage.getItem('ceron_has_chosen_class')
+  );
+
   // Dedication to Baba Jan & Mor Jan (Opened on-demand via Nav Bar)
   const [isDedicationOpen, setIsDedicationOpen] = useState<boolean>(false);
+  const [isTourOpen, setIsTourOpen] = useState<boolean>(false);
 
   // Navigation states
   const [activeView, setActiveView] = useState<'dashboard' | 'chapter' | 'lesson' | 'quiz'>('dashboard');
@@ -115,20 +125,38 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-between selection:bg-purple-200">
-      {/* Top Header with Class dropdown and switchers */}
-      <Header
-        activeProfile={activeProfile}
-        languagePref={languagePref}
-        isDarkMode={isDarkMode}
-        onToggleLanguage={() => setLanguagePref((p) => (p === 'en' ? 'ur' : 'en'))}
-        onToggleTheme={() => setIsDarkMode((d) => !d)}
-        onOpenDedication={() => setIsDedicationOpen(true)}
-        onSelectClass={handleSelectClass}
-      />
+      {/* Top Header with simple Class badge - Hidden when in AI Tutor or Class Picker */}
+      {activeTab !== 'tutor' && !isSelectingClass && (
+        <Header
+          activeProfile={activeProfile}
+          languagePref={languagePref}
+          isDarkMode={isDarkMode}
+          onToggleLanguage={() => setLanguagePref((p) => (p === 'en' ? 'ur' : 'en'))}
+          onToggleTheme={() => setIsDarkMode((d) => !d)}
+          onOpenDedication={() => setIsDedicationOpen(true)}
+          onOpenClassPicker={() => setIsSelectingClass(true)}
+        />
+      )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6">
-        {activeView === 'chapter' && activeUnit ? (
+      <main className={activeTab === 'tutor' || isSelectingClass ? 'flex-1 w-full p-0 m-0' : 'flex-1 max-w-4xl w-full mx-auto px-4 py-6'}>
+        {isSelectingClass ? (
+          <ClassSelectionPortal
+            currentClassId={activeProfile.classId}
+            canCancel={!!localStorage.getItem('ceron_has_chosen_class')}
+            onCancel={() => setIsSelectingClass(false)}
+            onSelectClass={(classId) => {
+              handleSelectClass(classId);
+              localStorage.setItem('ceron_has_chosen_class', 'true');
+              setIsSelectingClass(false);
+            }}
+          />
+        ) : activeTab === 'tutor' ? (
+          <CeronAIClaudeView
+            profile={activeProfile}
+            onExit={() => setActiveTab('home')}
+          />
+        ) : activeView === 'chapter' && activeUnit ? (
           <ChapterDetailView
             unit={activeUnit}
             subject={SUBJECTS.find((s) => s.id === activeUnit.subjectId)}
@@ -189,13 +217,13 @@ export const App: React.FC = () => {
           <div className="max-w-3xl mx-auto py-6 px-2 sm:px-4">
             <div className="pearl-card p-6 text-center bg-white border border-slate-200 shadow-md rounded-2xl mb-6">
               <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-purple-100 text-purple-700 border border-purple-200 inline-block mb-2">
-                ✨ Official BISE Swat 50 MCQs Mock Examinations
+                ✨ Official BISE Swat 20 MCQs Examination (Simple to Hard)
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
-                AI Chapter Mock Test Generator
+                AI Chapter Exam Generator
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 mb-6 font-medium max-w-xl mx-auto leading-relaxed">
-                Choose any chapter below to launch an instant AI-generated 50-MCQ board examination. Every test features a fresh set of randomized questions, formulas, conceptual deductions, and official 33% passing standards.
+                Choose any chapter below to launch an instant AI-generated 20-MCQ board examination calibrated progressively from Simple (Recall &amp; Definitions) to Medium (Formulas) to Hard (Calculations).
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
@@ -224,7 +252,7 @@ export const App: React.FC = () => {
                         </p>
                       </div>
                       <span className="text-xs font-bold text-purple-700 shrink-0 bg-purple-100 group-hover:bg-purple-200 px-2.5 py-1 rounded-lg border border-purple-200">
-                        50 MCQs →
+                        20 MCQs →
                       </span>
                     </button>
                   );
@@ -241,12 +269,13 @@ export const App: React.FC = () => {
             languagePref={languagePref}
             onSelectUnit={handleSelectUnit}
             onLaunchMockTest={() => handleLaunchMock(displayedUnits[0])}
+            onOpenTour={() => setIsTourOpen(true)}
           />
         )}
       </main>
 
-      {/* Adaptive Bottom Navigation Bar */}
-      {activeView === 'dashboard' && (
+      {/* Adaptive Bottom Navigation Bar - Hidden when in AI Tutor or Class Picker */}
+      {activeView === 'dashboard' && activeTab !== 'tutor' && !isSelectingClass && (
         <BottomBar
           ageBand={activeProfile.ageBand}
           activeTab={activeTab}
@@ -270,6 +299,20 @@ export const App: React.FC = () => {
       <DedicationSplashModal
         isOpen={isDedicationOpen}
         onClose={() => setIsDedicationOpen(false)}
+      />
+
+      {/* ── App Tour & Video Walkthrough Modal ── */}
+      <AppTourVideoModal
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onStartExam={() => {
+          setIsTourOpen(false);
+          setActiveTab('mock');
+        }}
+        onOpenAITutor={() => {
+          setIsTourOpen(false);
+          setActiveTab('tutor');
+        }}
       />
     </div>
   );

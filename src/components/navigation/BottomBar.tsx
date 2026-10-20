@@ -1,7 +1,7 @@
 import React from 'react';
 import { AgeBand } from '../../types';
 import { soundEngine } from '../../services/soundEngine';
-import { BookOpen, Zap, Award, FileText, BarChart2 } from 'lucide-react';
+import { BookOpen, Sparkles, FileText } from 'lucide-react';
 
 interface BottomBarProps {
   ageBand: AgeBand;
@@ -10,7 +10,6 @@ interface BottomBarProps {
 }
 
 export const BottomBar: React.FC<BottomBarProps> = ({
-  ageBand,
   activeTab,
   onTabChange,
 }) => {
@@ -19,106 +18,101 @@ export const BottomBar: React.FC<BottomBarProps> = ({
     onTabChange(id);
   };
 
-  if (ageBand === 'kg-3') {
-    return (
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 shadow-lg">
-        <div className="max-w-md mx-auto flex justify-around items-center">
-          <button
-            onClick={() => handleTab('home')}
-            className={`flex flex-col items-center gap-1 p-2 rounded-2xl cursor-pointer transition-all ${
-              activeTab === 'home' ? 'text-amber-600 scale-105 font-bold' : 'text-slate-400'
-            }`}
-          >
-            <span className="text-2xl">🏠</span>
-            <span className="text-[11px] font-extrabold">Play (کھیلیں)</span>
-          </button>
-
-          <button
-            onClick={() => handleTab('badges')}
-            className={`flex flex-col items-center gap-1 p-2 rounded-2xl cursor-pointer transition-all ${
-              activeTab === 'badges' ? 'text-purple-600 scale-105 font-bold' : 'text-slate-400'
-            }`}
-          >
-            <span className="text-2xl">⭐</span>
-            <span className="text-[11px] font-extrabold">Treasures (انعامات)</span>
-          </button>
-        </div>
-      </nav>
-    );
-  }
-
-  if (ageBand === '4-8') {
-    return (
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 shadow-lg">
-        <div className="max-w-md mx-auto flex justify-around items-center">
-          <button
-            onClick={() => handleTab('home')}
-            className={`flex flex-col items-center gap-0.5 p-1.5 cursor-pointer ${
-              activeTab === 'home' ? 'text-emerald-600 font-bold' : 'text-slate-400'
-            }`}
-          >
-            <BookOpen size={18} />
-            <span className="text-[10px]">Quests</span>
-          </button>
-
-          <button
-            onClick={() => handleTab('practice')}
-            className={`flex flex-col items-center gap-0.5 p-1.5 cursor-pointer ${
-              activeTab === 'practice' ? 'text-amber-600 font-bold' : 'text-slate-400'
-            }`}
-          >
-            <Zap size={18} />
-            <span className="text-[10px]">Practice</span>
-          </button>
-
-          <button
-            onClick={() => handleTab('badges')}
-            className={`flex flex-col items-center gap-0.5 p-1.5 cursor-pointer ${
-              activeTab === 'badges' ? 'text-purple-600 font-bold' : 'text-slate-400'
-            }`}
-          >
-            <Award size={18} />
-            <span className="text-[10px]">Badges</span>
-          </button>
-        </div>
-      </nav>
-    );
-  }
-
-  // 9-12 Matric / FSc
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-2 shadow-lg">
-      <div className="max-w-md mx-auto flex justify-around items-center">
+    <nav
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 40,
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(12px)',
+        borderTop: '1px solid #E2E8F0',
+        padding: '6px 12px 10px',
+        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.05)',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '440px',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          gap: '8px',
+        }}
+      >
+        {/* Tab 1: Syllabus */}
         <button
           onClick={() => handleTab('home')}
-          className={`flex flex-col items-center gap-0.5 p-1.5 cursor-pointer ${
-            activeTab === 'home' ? 'text-purple-600 font-bold' : 'text-slate-400'
-          }`}
+          style={{
+            flex: 1,
+            padding: '6px 4px',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            backgroundColor: activeTab === 'home' ? '#F1F5F9' : 'transparent',
+            color: activeTab === 'home' ? '#0F172A' : '#64748B',
+            fontWeight: activeTab === 'home' ? 800 : 500,
+          }}
         >
-          <BookOpen size={18} />
-          <span className="text-[10px]">Syllabus</span>
+          <BookOpen size={18} style={{ color: activeTab === 'home' ? '#0F172A' : '#94A3B8' }} />
+          <span style={{ fontSize: '11px', lineHeight: 1.2 }}>Syllabus</span>
         </button>
 
+        {/* Tab 2: Ask AI Tutor (Center Highlight) */}
+        <button
+          onClick={() => handleTab('tutor')}
+          style={{
+            flex: 1.15,
+            padding: '6px 8px',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            border: activeTab === 'tutor' ? 'none' : '1px solid #E9D5FF',
+            backgroundColor: activeTab === 'tutor' ? '#7C3AED' : '#F5F3FF',
+            color: activeTab === 'tutor' ? '#FFFFFF' : '#6D28D9',
+            fontWeight: 700,
+            boxShadow: activeTab === 'tutor' ? '0 2px 8px rgba(124, 58, 237, 0.3)' : 'none',
+          }}
+        >
+          <Sparkles size={18} style={{ color: activeTab === 'tutor' ? '#FFFFFF' : '#7C3AED' }} />
+          <span style={{ fontSize: '11px', lineHeight: 1.2 }}>Ask AI Tutor</span>
+        </button>
+
+        {/* Tab 3: Mock Exams */}
         <button
           onClick={() => handleTab('mock')}
-          className={`flex flex-col items-center gap-0.5 p-1.5 cursor-pointer ${
-            activeTab === 'mock' ? 'text-purple-600 font-bold' : 'text-slate-400'
-          }`}
+          style={{
+            flex: 1,
+            padding: '6px 4px',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            border: 'none',
+            backgroundColor: activeTab === 'mock' ? '#ECFDF5' : 'transparent',
+            color: activeTab === 'mock' ? '#047857' : '#64748B',
+            fontWeight: activeTab === 'mock' ? 700 : 500,
+          }}
         >
-          <FileText size={18} />
-          <span className="text-[10px]">Mock Exams</span>
-        </button>
-
-        <button
-          onClick={() => handleTab('progress')}
-          className={`flex flex-col items-center gap-0.5 p-1.5 cursor-pointer ${
-            activeTab === 'progress' ? 'text-purple-600 font-bold' : 'text-slate-400'
-          }`}
-        >
-          <BarChart2 size={18} />
-          <span className="text-[10px]">Analytics</span>
+          <FileText size={18} style={{ color: activeTab === 'mock' ? '#059669' : '#94A3B8' }} />
+          <span style={{ fontSize: '11px', lineHeight: 1.2 }}>20-MCQ Exam</span>
         </button>
       </div>
     </nav>
   );
 };
+export default BottomBar;

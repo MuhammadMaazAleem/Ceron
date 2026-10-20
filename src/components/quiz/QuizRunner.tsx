@@ -26,6 +26,7 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
   const [attemptResult, setAttemptResult] = useState<QuizAttempt | null>(null);
   const [showGridModal, setShowGridModal] = useState<boolean>(false);
   const [filterMode, setFilterMode] = useState<'all' | 'unanswered' | 'flagged'>('all');
+  const [showQuitConfirm, setShowQuitConfirm] = useState<boolean>(false);
 
   // Reset state when quiz changes
   useEffect(() => {
@@ -35,6 +36,7 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
     setTimeLeft(quiz.timeLimitMinutes * 60);
     setIsSubmitted(false);
     setAttemptResult(null);
+    setShowQuitConfirm(false);
   }, [quiz.id]);
 
   // Timer countdown
@@ -64,6 +66,15 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
       prev.includes(qId) ? prev.filter((id) => id !== qId) : [...prev, qId]
     );
     soundEngine.playPop();
+  };
+
+  const handleQuit = () => {
+    soundEngine.playPop();
+    if (answeredCount > 0) {
+      setShowQuitConfirm(true);
+    } else {
+      onExit();
+    }
   };
 
   const handleSubmit = () => {
@@ -133,23 +144,52 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
 
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 space-y-4">
+      {/* ── TOP NAV BAR: BACK & QUIT QUIZ ──────────────────────────── */}
+      <div className="flex items-center justify-between gap-2">
+        <button
+          onClick={handleQuit}
+          className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 hover:text-slate-900 text-xs font-bold border border-slate-300 transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
+          title="Back to Chapter / Exit Quiz"
+        >
+          <ChevronLeft size={16} />
+          <span>Back to Chapter</span>
+        </button>
+
+        <button
+          onClick={handleQuit}
+          className="px-3 py-1 rounded-lg text-slate-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-semibold cursor-pointer transition flex items-center gap-1 border border-transparent hover:border-rose-200"
+          title="Quit this active quiz"
+        >
+          <span>Quit Quiz</span>
+        </button>
+      </div>
+
       {/* ── TOP BANNER: EXAM INFO & ACTIONS ────────────────────────── */}
       <div className="pearl-card p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white border border-slate-200 shadow-sm">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 border border-purple-200">
-              ✨ AI Board Mock Exam • 50 MCQs
-            </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-              BISE Swat Passing: 33%
-            </span>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <button
+            onClick={handleQuit}
+            className="p-2 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-slate-700 border border-slate-200 transition cursor-pointer shrink-0"
+            title="Quit quiz and go back"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 border border-purple-200">
+                ✨ AI Board Exam • {quiz.questions.length} MCQs (Simple to Hard)
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                BISE Swat Passing: 33%
+              </span>
+            </div>
+            <h2 className="text-sm sm:text-base font-bold text-slate-900 truncate">
+              {quiz.titleEn}
+            </h2>
+            <p className="text-xs font-nastaliq text-purple-700 font-bold truncate">
+              {quiz.titleUr}
+            </p>
           </div>
-          <h2 className="text-sm sm:text-base font-bold text-slate-900 truncate">
-            {quiz.titleEn}
-          </h2>
-          <p className="text-xs font-nastaliq text-purple-700 font-bold truncate">
-            {quiz.titleUr}
-          </p>
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end shrink-0">
@@ -428,18 +468,28 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
         </div>
       </div>
 
-      {/* ── BOTTOM NAVIGATION: PREVIOUS, NEXT, SUBMIT ───────────────── */}
+      {/* ── BOTTOM NAVIGATION: PREVIOUS, QUIT, NEXT, SUBMIT ──────────── */}
       <div className="flex items-center justify-between gap-2 pt-2">
-        <button
-          onClick={() => {
-            setCurrentIdx((p) => Math.max(0, p - 1));
-            soundEngine.playPop();
-          }}
-          disabled={currentIdx === 0}
-          className="pearl-btn pearl-btn-ghost py-2.5 px-4 text-xs sm:text-sm font-bold disabled:opacity-40 flex items-center gap-1 cursor-pointer"
-        >
-          <ChevronLeft size={16} /> Previous
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setCurrentIdx((p) => Math.max(0, p - 1));
+              soundEngine.playPop();
+            }}
+            disabled={currentIdx === 0}
+            className="pearl-btn pearl-btn-ghost py-2.5 px-4 text-xs sm:text-sm font-bold disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+          >
+            <ChevronLeft size={16} /> Previous
+          </button>
+
+          <button
+            onClick={handleQuit}
+            className="px-3 py-2 rounded-xl text-slate-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-semibold transition cursor-pointer flex items-center gap-1 border border-transparent hover:border-rose-200"
+            title="Quit quiz"
+          >
+            <span>Quit Quiz</span>
+          </button>
+        </div>
 
         <div className="flex items-center gap-2">
           {currentIdx === quiz.questions.length - 1 ? (
@@ -475,6 +525,58 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
           )}
         </div>
       </div>
+
+      {/* ── QUIT QUIZ CONFIRMATION MODAL ────────────────────────────── */}
+      {showQuitConfirm && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <AlertTriangle size={22} />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900">
+                  Quit Active Quiz?
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  You have answered {answeredCount} of {quiz.questions.length} questions.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+              Do you want to submit your answered questions to save your official score, or exit now without saving?
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setShowQuitConfirm(false);
+                  handleSubmit();
+                }}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs cursor-pointer transition text-center"
+              >
+                Submit ({answeredCount} Answered)
+              </button>
+              <button
+                onClick={() => {
+                  setShowQuitConfirm(false);
+                  onExit();
+                }}
+                className="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs cursor-pointer transition text-center"
+              >
+                Quit Quiz
+              </button>
+              <button
+                onClick={() => setShowQuitConfirm(false)}
+                className="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer transition text-center"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

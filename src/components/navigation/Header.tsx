@@ -1,9 +1,8 @@
 import React from 'react';
 import { LearnerProfile } from '../../types';
-import { ALL_CLASSES } from '../../data/curriculumData';
-import { soundEngine } from '../../services/soundEngine';
-import { Volume2, VolumeX, Moon, Sun, Flame, Sparkles, BookOpen, Heart, Download } from 'lucide-react';
+import { Moon, Sun, Heart, Download, GraduationCap } from 'lucide-react';
 import { InstallAppModal } from '../common/InstallAppModal';
+import { CeronLogo } from '../common/CeronLogo';
 
 interface HeaderProps {
   activeProfile: LearnerProfile;
@@ -12,7 +11,7 @@ interface HeaderProps {
   onToggleLanguage: () => void;
   onToggleTheme: () => void;
   onOpenDedication?: () => void;
-  onSelectClass: (classId: string) => void;
+  onOpenClassPicker?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,9 +21,8 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleLanguage,
   onToggleTheme,
   onOpenDedication,
-  onSelectClass,
+  onOpenClassPicker,
 }) => {
-  const [isMuted, setIsMuted] = React.useState(soundEngine.isMuted());
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null);
   const [isInstallModalOpen, setIsInstallModalOpen] = React.useState<boolean>(false);
 
@@ -38,7 +36,6 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const handleInstallClick = () => {
-    soundEngine.playPop();
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then((choice: any) => {
@@ -51,143 +48,99 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  const handleToggleSound = () => {
-    const next = soundEngine.toggleMute();
-    setIsMuted(next);
-  };
+  const simpleClassName =
+    activeProfile.className?.replace(/\(.*?\)/g, '').trim() || 'Class 10';
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 transition-all shadow-xs">
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-2 sm:gap-3 flex-wrap">
-        {/* Left: Brand Logo & Title */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold shadow-xs">
-            <BookOpen size={16} />
-          </div>
-          <div>
-            <h1 className="font-bold text-slate-900 text-base leading-none tracking-tight">
-              Ceron Academic
-            </h1>
-            <span className="text-[10px] text-slate-500 font-medium tracking-wide block mt-0.5">
-              BISE Swat &bull; Classes 9th &ndash; 12th
-            </span>
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.03)] transition-all">
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 flex flex-col gap-2">
+        {/* Main Bar: Brand Logo & Quick Action Controls */}
+        <div className="flex items-center justify-between gap-2">
+          {/* Left: Brand Identity with Custom Logo */}
+          <CeronLogo size={34} />
+
+          {/* Right: Quick Action Controls */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* Install App Button */}
+            <button
+              onClick={handleInstallClick}
+              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/70 transition cursor-pointer flex items-center gap-1"
+              title="Install Ceron App on mobile or desktop"
+            >
+              <Download size={12} className="text-indigo-600" />
+              <span className="text-[11px] font-bold">App</span>
+            </button>
+
+            {/* Language Switcher */}
+            <button
+              onClick={onToggleLanguage}
+              className="px-2 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/80 cursor-pointer transition"
+              title="Toggle Urdu / English script"
+            >
+              {languagePref === 'en' ? 'اردو' : 'EN'}
+            </button>
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={onToggleTheme}
+              className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 items-center justify-center text-slate-600 cursor-pointer transition hidden sm:flex"
+              title="Toggle Dark Mode"
+            >
+              {isDarkMode ? <Sun size={13} className="text-amber-500" /> : <Moon size={13} className="text-slate-600" />}
+            </button>
           </div>
         </div>
 
-        {/* Center: Grade/Class Selector & Dedication Ribbon */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Class Selector Dropdown */}
-          <div className="relative flex items-center">
-            <select
-              value={activeProfile.classId}
-              onChange={(e) => {
-                soundEngine.playPop();
-                onSelectClass(e.target.value);
-              }}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-50 text-slate-900 border border-slate-200 cursor-pointer hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs"
-              title="Select Class (9th to 12th)"
+        {/* Sub Bar: Simple Class Indicator & Dedication Ribbon */}
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+          {/* Simple, Clean Class Badge with Switch Link */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onOpenClassPicker}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold cursor-pointer transition shadow-2xs"
+              title="Click to switch class"
             >
-              {ALL_CLASSES.map((cls) => (
-                <option key={cls.id} value={cls.id}>
-                  {cls.nameEn}
-                </option>
-              ))}
-            </select>
+              <GraduationCap size={13} className="text-indigo-600 shrink-0" />
+              <span className="font-bold text-slate-900">{simpleClassName}</span>
+              <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">&bull; BISE Swat</span>
+            </button>
+
+            {onOpenClassPicker && (
+              <button
+                onClick={onOpenClassPicker}
+                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:underline cursor-pointer transition"
+                title="Choose another class"
+              >
+                Change
+              </button>
+            )}
           </div>
 
-          {/* ── DEDICATION NAV BAR ITEM (HD TIMES NEW ROMAN & LUXURY GOLD) ── */}
+          {/* Dedication Button */}
           {onOpenDedication && (
             <button
               id="dedication-nav-btn"
               onClick={() => {
-                soundEngine.playPop();
                 onOpenDedication();
               }}
-              className="group relative px-3 py-1.5 rounded-xl text-amber-100 flex items-center gap-2 transition-all cursor-pointer shadow-md hover:scale-[1.03] active:scale-[0.98] border border-amber-400/80"
+              className="group relative px-2.5 py-1 rounded-lg text-amber-100 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs hover:shadow-sm hover:scale-[1.01] active:scale-[0.98] border border-amber-500/70"
               style={{
-                background: 'linear-gradient(135deg, #78350F 0%, #92400E 40%, #B45309 75%, #D97706 100%)',
-                boxShadow: '0 2px 12px rgba(180, 83, 9, 0.35)',
+                background: 'linear-gradient(135deg, #78350F 0%, #92400E 40%, #B45309 80%, #D97706 100%)',
               }}
-              title="Dedicated to Baba Jan & Mor Jan • Click to view dedication and recite Duas"
+              title="Dedicated to Baba Jan & Mor Jan"
             >
-              <span className="w-5 h-5 rounded-full bg-amber-400/30 flex items-center justify-center shrink-0">
-                <Heart size={12} className="fill-amber-300 text-amber-200 animate-pulse" />
-              </span>
+              <Heart size={11} className="fill-amber-300 text-amber-200 shrink-0 animate-pulse" />
               <span
                 style={{
                   fontFamily: '"Times New Roman", Times, Georgia, serif',
                   letterSpacing: '0.015em',
                 }}
-                className="text-xs sm:text-sm font-bold text-amber-50 drop-shadow-xs whitespace-nowrap"
+                className="text-[11px] sm:text-xs font-bold text-amber-50 whitespace-nowrap"
               >
                 Dedicated to Baba Jan &amp; Mor Jan
               </span>
             </button>
           )}
-        </div>
-
-        {/* Right: Gamification & Essential Controls (No Profiles & No Admin Settings) */}
-        <div className="flex items-center gap-1.5">
-          {/* Streak */}
-          <div className="text-xs font-semibold px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
-            <Flame size={12} className="text-amber-600 fill-amber-500" />
-            <span>{activeProfile.streakDays}d streak</span>
-          </div>
-
-          {/* XP */}
-          <div className="text-xs font-semibold px-2 py-1 rounded-md bg-slate-100 text-slate-800 border border-slate-200 hidden sm:flex items-center gap-1">
-            <Sparkles size={11} className="text-indigo-600" />
-            <span>{activeProfile.xp} XP</span>
-          </div>
-
-          {/* Install / Download App Button */}
-          <button
-            onClick={handleInstallClick}
-            className="px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shadow-xs border"
-            style={{
-              backgroundColor: '#EEF2FF',
-              color: '#4F46E5',
-              borderColor: '#C7D2FE',
-            }}
-            title="Download / Install Ceron App on your phone or PC"
-          >
-            <Download size={13} className="text-indigo-600" />
-            <span className="hidden sm:inline">Install App</span>
-            <span className="sm:hidden">App</span>
-          </button>
-
-          {/* Bilingual Toggle (EN | اردو) */}
-          <button
-            onClick={() => {
-              soundEngine.playPop();
-              onToggleLanguage();
-            }}
-            className="pearl-pill text-xs font-bold bg-white text-slate-700 hover:bg-slate-50 cursor-pointer px-2 py-1"
-            title="Toggle Urdu / English script"
-          >
-            {languagePref === 'en' ? 'اردو' : 'EN'}
-          </button>
-
-          {/* Audio Mute Toggle */}
-          <button
-            onClick={handleToggleSound}
-            className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 cursor-pointer"
-            title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-          >
-            {isMuted ? <VolumeX size={13} className="text-rose-500" /> : <Volume2 size={13} className="text-emerald-600" />}
-          </button>
-
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={() => {
-              soundEngine.playPop();
-              onToggleTheme();
-            }}
-            className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 cursor-pointer hidden md:flex"
-            title="Toggle Dark Mode"
-          >
-            {isDarkMode ? <Sun size={13} className="text-amber-500" /> : <Moon size={13} className="text-slate-600" />}
-          </button>
         </div>
       </div>
 
@@ -205,3 +158,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+export default Header;

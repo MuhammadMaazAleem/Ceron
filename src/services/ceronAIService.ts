@@ -267,7 +267,7 @@ CRITICAL PEDAGOGICAL GUIDELINES FOR BEGINNERS:
    - For BIOLOGY: Focus on biological concepts, cell structures, organs, pathways, and diagrams. Strictly NO math formulas or numericals!
    - For PHYSICS / CHEMISTRY / MATH: State every formula in a clean box, define every symbol with its SI unit, and provide a clear 4-step solved numerical.
 5. 100% PURE ENGLISH: Do not include Urdu words or translations in the text.
-6. TARGET LENGTH: Comprehensive and detailed (up to 3,500-4,000 words), but organized into clean, easy-to-read, structured sections that never feel crowded.
+6. TARGET LENGTH: Comprehensive, exhaustive, and in-depth (up to 4,000–5,000 words), thoroughly explaining every aspect of the topic with rich everyday analogies, derivations, biochemical/physical mechanisms, comparison tables, and full 4-mark and 7-mark model exam answers.
 
 FOLLOW THIS EXACT 8-SECTION BEGINNER-FRIENDLY STRUCTURE:
 

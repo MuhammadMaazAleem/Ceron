@@ -15,6 +15,7 @@ import {
   ChevronUp,
   Flame,
   ListVideo,
+  ArrowRight,
 } from 'lucide-react';
 
 interface PhysicsVideoLectureCardProps {
@@ -75,30 +76,30 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-6 transition-all hover:shadow-md">
+    <div className="video-masterclass-card">
       {/* ── Top Header Strip ────────────────────────────────────── */}
       <div
-        className="p-4 text-white"
+        className="p-4 sm:p-5 text-white"
         style={{
-          background: 'linear-gradient(135deg, #B91C1C 0%, #991B1B 45%, #1E1B4B 100%)',
+          background: 'linear-gradient(135deg, #881337 0%, #991B1B 45%, #0F172A 100%)',
           color: '#FFFFFF',
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white font-bold shadow-inner">
-              <Tv size={18} />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white font-bold shadow-inner border border-white/20">
+              <Tv size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full border border-white/15">
                   {subjectDisplayName} Video Masterclass
                 </span>
                 <span className="text-[10px] font-medium text-rose-100 flex items-center gap-1">
-                  <Flame size={11} className="text-amber-300" /> Top Audience Educators
+                  <Flame size={12} className="text-amber-300" /> Top Audience Educators
                 </span>
               </div>
-              <h3 className="text-sm sm:text-base font-extrabold text-white mt-0.5 leading-tight">
+              <h3 className="text-sm sm:text-base font-extrabold text-white mt-1 leading-tight">
                 {unit.titleEn}
               </h3>
             </div>
@@ -107,7 +108,7 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition cursor-pointer text-xs flex items-center gap-1 font-semibold"
+              className="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer text-xs flex items-center gap-1.5 font-bold border border-white/15"
               title={isExpanded ? 'Collapse' : 'Expand'}
             >
               {isExpanded ? (
@@ -124,10 +125,10 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
         </div>
 
         {/* Selected Topic Bar */}
-        <div className="mt-3 pt-3 border-t border-white/15 flex items-center justify-between flex-wrap gap-2 text-xs">
+        <div className="mt-3.5 pt-3 border-t border-white/15 flex items-center justify-between flex-wrap gap-2 text-xs">
           <div className="flex items-center gap-2 text-rose-100">
-            <BookOpen size={13} className="shrink-0 text-white" />
-            <span className="font-semibold text-white">Current Topic:</span>
+            <BookOpen size={13} className="shrink-0 text-amber-300" />
+            <span className="font-bold text-white">Current Topic:</span>
             <span className="truncate max-w-[280px] sm:max-w-md font-medium text-white/90">
               {activeTopicTitle.replace(/^\d+\.\d+\s*/, '')}
             </span>
@@ -143,59 +144,57 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
 
       {isExpanded && (
         <div className="p-4 sm:p-5 space-y-4">
-          {/* ── Teacher Selection Pills ──────────────────────────── */}
+          {/* ── Teacher Selection Cards ──────────────────────────── */}
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-2.5">
               <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <Users size={14} className="text-indigo-600" />
+                <Users size={14} className="text-rose-600" />
                 <span>Select Teacher for {classId.replace('class_', 'Class ')} {subjectDisplayName}:</span>
               </label>
-              <span className="text-[11px] text-slate-500 font-medium">
+              <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
                 Distinct high-audience educators per subject &amp; class
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               {teachers.map((teacher) => {
                 const isSelected = teacher.id === selectedTeacherId;
                 return (
                   <button
                     key={teacher.id}
                     onClick={() => handleSelectTeacher(teacher)}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
-                      isSelected
-                        ? 'border-red-500 bg-red-50/70 shadow-xs ring-1 ring-red-400'
-                        : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
-                    }`}
+                    className={`teacher-selector-card ${isSelected ? 'is-active' : ''}`}
                   >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-lg">{teacher.avatarEmoji}</span>
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <span className="text-xl p-1 bg-slate-50 rounded-lg border border-slate-100">
+                        {teacher.avatarEmoji}
+                      </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1">
                           <span
                             className={`text-xs font-bold truncate ${
-                              isSelected ? 'text-red-950' : 'text-slate-900'
+                              isSelected ? 'text-rose-950 font-extrabold' : 'text-slate-900'
                             }`}
                           >
                             {teacher.name}
                           </span>
-                          <CheckCircle2 size={12} className="text-red-600 shrink-0" />
+                          {isSelected ? (
+                            <CheckCircle2 size={13} className="text-rose-600 shrink-0" />
+                          ) : (
+                            <CheckCircle2 size={13} className="text-slate-300 shrink-0" />
+                          )}
                         </div>
-                        <div className="text-[10px] text-slate-500 truncate">
+                        <div className="text-[10px] text-slate-500 truncate mt-0.5">
                           {teacher.channelName}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-slate-100">
-                      <span className="font-semibold text-slate-700 flex items-center gap-0.5">
-                        <Users size={10} className="text-slate-400" /> {teacher.subscribers}
+                    <div className="flex items-center justify-between text-[10px] pt-2 border-t border-slate-100">
+                      <span className="font-semibold text-slate-600 flex items-center gap-1">
+                        <Users size={11} className="text-slate-400" /> {teacher.subscribers}
                       </span>
-                      <span
-                        className={`font-semibold px-1.5 py-0.2 rounded text-[9px] ${
-                          isSelected ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'
-                        }`}
-                      >
+                      <span className={`teacher-views-badge ${isSelected ? 'is-active' : 'is-inactive'}`}>
                         {teacher.views}
                       </span>
                     </div>
@@ -206,18 +205,18 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
           </div>
 
           {/* ── Active Teacher Bio & Focus Pill ──────────────────── */}
-          <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/80 flex items-start gap-3 flex-wrap sm:flex-nowrap">
+          <div className="bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-xl p-3.5 border border-slate-200/90 flex items-start gap-3.5 flex-wrap sm:flex-nowrap shadow-2xs">
             <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-xl shadow-xs shrink-0">
               {currentTeacher.avatarEmoji}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h4 className="text-xs font-extrabold text-slate-900">{currentTeacher.name}</h4>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200 flex items-center gap-1">
                   <Award size={10} /> {currentTeacher.ratingBadge}
                 </span>
                 <span className="text-[11px] text-slate-500 font-medium">
-                  • {currentTeacher.language}
+                  &bull; {currentTeacher.language}
                 </span>
               </div>
               <p className="text-xs text-slate-600 mt-1 leading-relaxed">
@@ -235,7 +234,7 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
             <div className="space-y-2 animate-in fade-in duration-200">
               <div className="flex items-center justify-between text-xs font-bold text-slate-800">
                 <span className="flex items-center gap-1.5">
-                  <Play size={13} className="text-red-600 fill-red-600" />
+                  <Play size={13} className="text-rose-600 fill-rose-600" />
                   Streaming Top Lecture for: {activeTopicTitle.replace(/^\d+\.\d+\s*/, '')}
                 </span>
                 <button
@@ -257,7 +256,7 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
                 />
               </div>
 
-              <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between flex-wrap gap-2">
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between flex-wrap gap-2">
                 <span className="flex items-center gap-1.5 font-medium">
                   <Sparkles size={13} className="text-amber-600 shrink-0" />
                   <span>If YouTube blocks embedded streaming, open directly with 1 click:</span>
@@ -266,9 +265,9 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
                   href={videoInfo.firstVideoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] flex items-center gap-1 shadow-xs transition"
+                  className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-xs transition"
                 >
-                  <Play size={10} className="fill-white" /> Watch Lecture 1 on YouTube (HD) <ExternalLink size={10} />
+                  <Play size={11} className="fill-white" /> Watch Lecture 1 on YouTube (HD) <ArrowRight size={12} />
                 </a>
               </div>
 
@@ -280,20 +279,20 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
                   href={videoInfo.firstVideoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-red-600 hover:underline flex items-center gap-1 font-semibold"
+                  className="text-rose-600 hover:underline flex items-center gap-1 font-semibold"
                 >
                   Watch Lecture 1 in YouTube App <ExternalLink size={11} />
                 </a>
               </div>
             </div>
           ) : (
-            <div className="bg-slate-900 text-white rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-              <div className="flex items-center gap-3 text-center sm:text-left">
-                <div className="w-11 h-11 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-red-600/30">
-                  <Play size={20} className="fill-white translate-x-0.5" />
+            <div className="stream-banner-box flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5 text-center sm:text-left">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-rose-600/30">
+                  <Play size={18} className="fill-white translate-x-0.5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-extrabold text-white">
                     Watch {subjectDisplayName} Lecture in App
                   </h4>
                   <p className="text-xs text-slate-300 mt-0.5">
@@ -304,36 +303,47 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
 
               <button
                 onClick={handleTogglePlayer}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all shrink-0 hover:scale-[1.02]"
+                className="btn-start-stream w-full sm:w-auto"
               >
-                <Play size={14} className="fill-white" /> Start Watching Now
+                <Play size={14} className="fill-white" />
+                <span>Start Watching Now</span>
+                <ArrowRight size={14} />
               </button>
             </div>
           )}
 
           {/* ── Direct Playlist & First Video YouTube Action Cards ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
             {/* Action 1: First Video of Playlist (Lecture 1) */}
             <a
               href={videoInfo.firstVideoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-xl border border-red-300 bg-red-50 hover:bg-red-100 text-red-950 flex items-center justify-between gap-2 transition group shadow-xs cursor-pointer"
+              className="video-action-card-link card-ruby group"
             >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Play size={14} className="fill-white" />
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="action-icon-pill"
+                  style={{
+                    background: 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)',
+                    color: '#FFFFFF',
+                    boxShadow: '0 2px 8px rgba(225, 29, 72, 0.25)',
+                  }}
+                >
+                  <Play size={16} className="fill-white" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold truncate">
+                  <div className="text-xs font-bold text-slate-900 group-hover:text-rose-700 transition truncate">
                     Watch Lecture 1 (First Video)
                   </div>
-                  <div className="text-[10px] text-red-700 truncate">
+                  <div className="text-[10px] text-slate-500 truncate mt-0.5">
                     First video of Chapter {unit.kptbbChapter} playlist
                   </div>
                 </div>
               </div>
-              <ExternalLink size={14} className="text-red-700 group-hover:translate-x-0.5 transition shrink-0" />
+              <div className="action-arrow-indicator" title="Watch on YouTube">
+                <ArrowRight size={14} />
+              </div>
             </a>
 
             {/* Action 2: Open Full Chapter Playlist on YouTube */}
@@ -341,22 +351,31 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
               href={videoInfo.playlistUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 flex items-center justify-between gap-2 transition group shadow-xs cursor-pointer"
+              className="video-action-card-link card-indigo group"
             >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-slate-800 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <ListVideo size={15} />
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="action-icon-pill"
+                  style={{
+                    background: 'linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)',
+                    color: '#FFFFFF',
+                    boxShadow: '0 2px 8px rgba(79, 70, 229, 0.25)',
+                  }}
+                >
+                  <ListVideo size={17} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold truncate">
+                  <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-700 transition truncate">
                     Open Full Chapter Playlist
                   </div>
-                  <div className="text-[10px] text-slate-500 truncate">
+                  <div className="text-[10px] text-slate-500 truncate mt-0.5">
                     All topics by {currentTeacher.name}
                   </div>
                 </div>
               </div>
-              <ExternalLink size={14} className="text-slate-600 group-hover:translate-x-0.5 transition shrink-0" />
+              <div className="action-arrow-indicator" title="Open YouTube Playlist">
+                <ArrowRight size={14} />
+              </div>
             </a>
 
             {/* Action 3: Direct Topic Video Search */}
@@ -364,22 +383,31 @@ export const PhysicsVideoLectureCard: React.FC<PhysicsVideoLectureCardProps> = (
               href={videoInfo.topicVideoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 flex items-center justify-between gap-2 transition group shadow-xs cursor-pointer"
+              className="video-action-card-link card-sky group"
             >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-indigo-700 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Tv size={15} />
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="action-icon-pill"
+                  style={{
+                    background: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
+                    color: '#FFFFFF',
+                    boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)',
+                  }}
+                >
+                  <Tv size={16} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold truncate">
+                  <div className="text-xs font-bold text-slate-900 group-hover:text-sky-700 transition truncate">
                     Watch Specific Topic
                   </div>
-                  <div className="text-[10px] text-slate-500 truncate">
+                  <div className="text-[10px] text-slate-500 truncate mt-0.5">
                     {activeTopicTitle.replace(/^\d+\.\d+\s*/, '')}
                   </div>
                 </div>
               </div>
-              <ExternalLink size={14} className="text-slate-600 group-hover:translate-x-0.5 transition shrink-0" />
+              <div className="action-arrow-indicator" title="Search Topic Video">
+                <ArrowRight size={14} />
+              </div>
             </a>
           </div>
         </div>
