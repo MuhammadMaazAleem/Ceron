@@ -1,5 +1,5 @@
 // Ceron Academic Service Worker — PWA Offline & Install Support
-const CACHE_NAME = 'ceron-academic-v2';
+const CACHE_NAME = 'ceron-academic-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

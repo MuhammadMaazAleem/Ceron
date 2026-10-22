@@ -197,31 +197,31 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               className="video-notice-banner group"
               title="Click to expand teacher video lectures"
             >
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs"
                   style={{ background: 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)' }}
                 >
-                  <Play size={16} className="fill-white translate-x-0.5" />
+                  <Play size={15} className="fill-white translate-x-0.5" />
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-extrabold text-slate-900">
-                      Watch Video Lectures for {unit.titleEn}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <span className="text-xs font-extrabold text-slate-900 leading-tight">
+                      Watch Video Lectures
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
-                      Top Audience Educators
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-800 border border-rose-200 shrink-0">
+                      Top Educators
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                    Curated masterclasses by Dr. Hadi, Sabaq Foundation, and Campus.pk
+                  <p className="text-[10px] sm:text-[11px] text-slate-500 truncate mt-0.5 max-w-full">
+                    Curated masterclasses by Dr. Hadi, Sabaq Foundation &bull; KPTBB
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-xs font-extrabold text-rose-700 shrink-0">
-                <span className="hidden sm:inline">Watch Videos</span>
-                <div className="w-6 h-6 rounded-lg bg-rose-100 flex items-center justify-center text-rose-700 group-hover:bg-rose-600 group-hover:text-white transition">
+              <div className="flex items-center gap-1.5 text-xs font-extrabold text-rose-700 shrink-0 ml-1.5">
+                <span className="hidden sm:inline">Watch</span>
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-rose-100 flex items-center justify-center text-rose-700 group-hover:bg-rose-600 group-hover:text-white transition shrink-0">
                   <ArrowDown size={13} style={{ animation: 'bounce 1s infinite' }} />
                 </div>
               </div>
@@ -243,11 +243,10 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
           <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
             <button
               onClick={() => setActiveTab('topics')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'topics'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${activeTab === 'topics'
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50'
-              }`}
+                }`}
             >
               <BookOpen size={14} />
               <span>Chapter Topics ({lessons.length})</span>
@@ -256,11 +255,10 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
             {solvedCount > 0 && (
               <button
                 onClick={() => setActiveTab('exercises')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'exercises'
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${activeTab === 'exercises'
                     ? 'bg-slate-900 text-white shadow-xs'
                     : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50'
-                }`}
+                  }`}
               >
                 <FileText size={14} />
                 <span>Solved Exercises ({solvedCount})</span>
@@ -285,55 +283,56 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                       setSelectedLesson(lesson);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="p-4 sm:p-5 bg-white border border-slate-200/90 rounded-2xl hover:border-indigo-400 hover:shadow-xs transition-all cursor-pointer flex items-start justify-between gap-4 group"
+                    className="p-3.5 sm:p-5 bg-white border border-slate-200/90 rounded-2xl hover:border-indigo-400 hover:shadow-xs transition-all cursor-pointer flex items-start justify-between gap-2.5 sm:gap-4 group"
                   >
-                    <div className="flex items-start gap-3.5 min-w-0">
+                    <div className="flex items-start gap-2.5 sm:gap-3.5 min-w-0 flex-1">
                       <span
-                        className={`w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 ${
-                          isCompleted
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 ${isCompleted
                             ? 'bg-emerald-100 text-emerald-800'
                             : 'bg-slate-100 text-slate-700 group-hover:bg-indigo-600 group-hover:text-white transition'
-                        }`}
+                          }`}
                       >
                         {isCompleted ? <CheckCircle2 size={16} /> : idx + 1}
                       </span>
 
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
                             Topic {lesson.lessonNumber}
                           </span>
                           <span className="text-[11px] text-slate-400">&bull;</span>
-                          <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1">
+                          <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium flex items-center gap-1">
                             <Clock size={11} /> ~{lesson.durationMinutes || 15} mins read
                           </span>
                         </div>
 
-                        <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                        <h3 className="text-xs sm:text-base font-bold text-slate-900 leading-snug break-words">
                           {lesson.titleEn}
                         </h3>
 
                         {lesson.titleUr && (
-                          <p className="text-xs text-slate-500 font-nastaliq" dir="rtl">
+                          <p className="text-[11px] sm:text-xs text-slate-500 font-nastaliq" dir="rtl">
                             {lesson.titleUr}
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0 pt-1">
+                    <div className="flex items-center gap-1 sm:gap-2 shrink-0 pt-1">
                       <span
-                        className="btn-gold-generate px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition group-hover:scale-[1.02]"
+                        className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs transition group-hover:scale-[1.02]"
                         style={{
-                          backgroundColor: '#F59E0B',
-                          color: '#0F172A',
-                          fontWeight: 800,
+                          backgroundColor: '#FEF3C7',
+                          color: '#92400E',
+                          border: '1px solid #FCD34D',
+                          fontWeight: 700,
                         }}
                       >
-                        <Sparkles size={13} style={{ color: '#0F172A', fill: '#0F172A' }} />
-                        <span style={{ color: '#0F172A', fontWeight: 800 }}>Generate 5,000-Word Guide</span>
+                        <Sparkles size={12} className="text-amber-600" />
+                        <span className="hidden sm:inline">Read Study Guide</span>
+                        <span className="sm:hidden text-[11px]">Guide</span>
                       </span>
-                      <ArrowRight size={15} className="text-slate-400 group-hover:text-amber-600" />
+                      <ArrowRight size={14} className="text-slate-400 group-hover:text-amber-600 shrink-0" />
                     </div>
                   </div>
                 );

@@ -98,11 +98,10 @@ export const ClassSelectionPortal: React.FC<ClassSelectionPortalProps> = ({
             <div
               key={cls.id}
               onClick={() => onSelectClass(cls.id)}
-              className={`p-5 rounded-2xl border transition-all cursor-pointer relative flex flex-col justify-between group shadow-xs hover:shadow-md ${
-                isCurrent
+              className={`p-5 rounded-2xl border transition-all cursor-pointer relative flex flex-col justify-between group shadow-xs hover:shadow-md ${isCurrent
                   ? 'bg-indigo-50/70 border-indigo-300 ring-2 ring-indigo-500/20'
                   : 'bg-white hover:bg-slate-50/80 border-slate-200/90 hover:border-indigo-300'
-              }`}
+                }`}
             >
               <div className="space-y-3">
                 {/* Header Strip */}

@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const simpleClassName =
-    activeProfile.className?.replace(/\(.*?\)/g, '').trim() || 'Class 10';
+    activeProfile.className?.replace(/\([^)]*\)/g, '').replace(/[()]/g, '').trim() || 'Class 10';
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.03)] transition-all">
@@ -92,23 +92,23 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Sub Bar: Simple Class Indicator & Dedication Ribbon */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+        <div className="flex items-center justify-between gap-1.5 pt-1 border-t border-slate-100 overflow-hidden">
           {/* Simple, Clean Class Badge with Switch Link */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
             <button
               onClick={onOpenClassPicker}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold cursor-pointer transition shadow-2xs"
+              className="flex items-center gap-1.5 px-2 py-1 sm:px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold cursor-pointer transition shadow-2xs max-w-[130px] sm:max-w-none"
               title="Click to switch class"
             >
               <GraduationCap size={13} className="text-indigo-600 shrink-0" />
-              <span className="font-bold text-slate-900">{simpleClassName}</span>
+              <span className="font-bold text-slate-900 truncate">{simpleClassName}</span>
               <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">&bull; BISE Swat</span>
             </button>
 
             {onOpenClassPicker && (
               <button
                 onClick={onOpenClassPicker}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:underline cursor-pointer transition"
+                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:underline cursor-pointer transition shrink-0"
                 title="Choose another class"
               >
                 Change
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => {
                 onOpenDedication();
               }}
-              className="group relative px-2.5 py-1 rounded-lg text-amber-100 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs hover:shadow-sm hover:scale-[1.01] active:scale-[0.98] border border-amber-500/70"
+              className="group relative px-2 py-1 sm:px-2.5 rounded-lg text-amber-100 flex items-center gap-1 sm:gap-1.5 transition-all cursor-pointer shadow-xs hover:shadow-sm hover:scale-[1.01] active:scale-[0.98] border border-amber-500/70 shrink-0 min-w-0"
               style={{
                 background: 'linear-gradient(135deg, #78350F 0%, #92400E 40%, #B45309 80%, #D97706 100%)',
               }}
@@ -135,9 +135,10 @@ export const Header: React.FC<HeaderProps> = ({
                   fontFamily: '"Times New Roman", Times, Georgia, serif',
                   letterSpacing: '0.015em',
                 }}
-                className="text-[11px] sm:text-xs font-bold text-amber-50 whitespace-nowrap"
+                className="text-[10.5px] sm:text-xs font-bold text-amber-50 whitespace-nowrap"
               >
-                Dedicated to Baba Jan &amp; Mor Jan
+                <span className="hidden sm:inline">Dedicated to Baba Jan &amp; Mor Jan</span>
+                <span className="sm:hidden">Baba Jan &amp; Mor Jan</span>
               </span>
             </button>
           )}

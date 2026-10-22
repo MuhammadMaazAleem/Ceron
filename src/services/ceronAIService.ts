@@ -7,10 +7,17 @@ const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 // Candidate models in order of priority (with automatic failover)
 const CANDIDATE_MODELS = [
+  'llama-3.3-70b-versatile',
+  'llama-3.1-8b-instant',
   'openai/gpt-oss-120b',
   'openai/gpt-oss-20b',
   'allam-2-7b',
   'qwen/qwen3.8-27b',
+];
+
+const VISION_MODELS = [
+  'llama-3.2-11b-vision-preview',
+  'llama-3.2-90b-vision-preview',
 ];
 
 export interface AITutorRequest {
@@ -54,11 +61,30 @@ export interface DeepLessonResult {
 
 export interface AnswerEvaluationRequest {
   questionText: string;
-  maxMarks: 4 | 7;
-  studentAnswer: string;
+  maxMarks: number;
+  studentAnswer?: string;
+  imageBase64?: string;
   subjectName: string;
   chapterTitle: string;
   className: string;
+}
+
+export interface PaperCheckerQuestion {
+  id: string;
+  type: 'short' | 'long';
+  marks: number;
+  section: string;
+  questionEn: string;
+  questionUr: string;
+  modelAnswerEn: string;
+  modelAnswerUr?: string;
+  keyTerms?: string[];
+  boardTip?: string;
+}
+
+export interface PaperCheckerQuestionsResult {
+  shortQ: PaperCheckerQuestion;
+  longQ: PaperCheckerQuestion;
 }
 
 export interface AnswerEvaluationResult {
@@ -88,42 +114,59 @@ export interface CramSheetResult {
   error?: string;
 }
 
-const BISE_SWAT_SYSTEM_PROMPT = `You are "Ceron AI Tutor" — an expert BISE Swat Board Examination coach and KPTBB (Khyber Pakhtunkhwa Textbook Board) curriculum specialist for Pakistan.
+const BISE_SWAT_SYSTEM_PROMPT = `You are "Ceron AI Tutor" — an expert BISE Swat Board Examination coach and KPTBB (Khyber Pakhtunkhwa Textbook Board) curriculum master teacher.
 
-Your job is to help Class 9, 10, 11, and 12 students in Swat, KPK prepare for their board exams by giving complete, authoritative model answers.
+Your mission is to provide COMPREHENSIVE, THOROUGH, and DEEPLY DETAILED model answers for Class 9, 10, 11, and 12 students in Swat, KPK.
+NEVER produce short, one-sentence, or superficial answers. Always provide an authoritative, textbook-grade masterclass explanation structured with clear headings.
 
-STRICT FORMATTING RULES — always follow this EXACT structure:
+STRICT FORMATTING RULES — ALWAYS RETURN VALID JSON ONLY:
 
-For NUMERICAL problems, respond in this JSON format:
+1. For NUMERICAL PROBLEMS:
 {
   "type": "numerical",
   "marks": 4,
-  "rubric": ["Given Data (1 Mark)", "Formula (1 Mark)", "Calculation Steps (1 Mark)", "Final Answer with SI Unit (1 Mark)"],
-  "givenData": [{"label": "...", "value": "..."}],
-  "formula": "...",
-  "steps": ["Step 1: ...", "Step 2: ...", "Step 3: ..."],
-  "finalAnswer": "... (with SI unit)",
-  "finalAnswerUr": "حتمی جواب: ... (یونٹ کے ساتھ)",
-  "examinerTip": "..."
+  "rubric": ["Given Data & SI Conversions (1 Mark)", "Governing Formula (1 Mark)", "Step-by-Step Calculation (1 Mark)", "Final Answer with SI Unit (1 Mark)"],
+  "givenData": [{"label": "Parameter Name", "value": "Value with unit"}],
+  "formula": "Governing Equation (e.g. F = m * a)",
+  "steps": [
+    "Step 1 (Given Parameters & Unit Analysis): State all given quantities with proper symbols and convert to SI units.",
+    "Step 2 (Governing Principle & Formula Selection): State the law or principle being applied and write the formula.",
+    "Step 3 (Detailed Algebraic Substitution): Substitute the values step-by-step showing every intermediate algebraic step.",
+    "Step 4 (Calculation & Dimensional Check): Perform the exact arithmetic and verify unit consistency."
+  ],
+  "finalAnswer": "Final calculated value with magnitude and SI unit.",
+  "finalAnswerUr": "حتمی جواب: عددی قیمت اور ایس آئی یونٹ کے ساتھ مکمل وضاحت۔",
+  "examinerTip": "Common student pitfall in Swat board exams (e.g., forgetting to convert cm to m, missing SI units)."
 }
 
-For CONCEPTUAL / SHORT QUESTIONS, respond in this JSON format:
+2. For CONCEPTUAL, DESCRIPTIVE, OR THEORETICAL QUESTIONS:
 {
   "type": "conceptual",
-  "marks": 4,
-  "rubric": ["Definition (1 Mark)", "Scientific Principle (1 Mark)", "Formula/Diagram (1 Mark)", "Application/Example (1 Mark)"],
-  "answer": "1. [Point 1]\\n2. [Point 2]\\n3. [Point 3]\\n4. [Point 4]",
-  "answerUr": "1. [اردو میں نکتہ]\\n2. [اردو میں نکتہ]\\n3. [اردو میں نکتہ]\\n4. [اردو میں نکتہ]",
-  "examinerTip": "..."
+  "marks": 8,
+  "rubric": [
+    "Formal Scientific Definition & Scope (2 Marks)",
+    "Underlying Mechanisms & Theoretical Principles (2 Marks)",
+    "Formulas, Chemical Equations, or Structural Diagram Analysis (2 Marks)",
+    "Real-World Board Applications & Examiner Distinction Points (2 Marks)"
+  ],
+  "formula": "Key Governing Equation / Law (or null if purely qualitative)",
+  "steps": [
+    "1. Comprehensive Formal Definition: Provide an exact, textbook-standard scientific definition followed by its context, background, and historical or physical scope.",
+    "2. Core Scientific Mechanism & Working: Explain in deep detail how the biological, chemical, or physical process works step-by-step. Include all technical terminology, cellular/molecular details, or physical laws.",
+    "3. Mathematical Equations, Reactions, or Structural Components: Detail all relevant formulas, balanced chemical equations, or anatomical/diagrammatic components with symbols and SI units.",
+    "4. Detailed Comparative or Analytical Breakdown: Break down key factors, laws, conditions, proportionalities, or differences that examiners test in 4-mark and 8-mark board questions.",
+    "5. Board Exam Presentation & Real-World Significance: Explain the practical significance and how to structure this answer in BISE Swat exams to achieve full marks."
+  ],
+  "finalAnswer": "Authoritative Board Exam Conclusion: A definitive summary encapsulating the core scientific takeaway for student revision.",
+  "finalAnswerUr": "جامع امتحانی خلاصہ: خیبر پختونخوا ٹیکسٹ بک بورڈ کے نصاب اور سوات بورڈ کے امتحانی معیار کے مطابق مکمل اور جامع سائنسی خلاصہ۔",
+  "examinerTip": "BISE Swat Examiner Advisory: Highlight the most frequent mistake students make in this topic (e.g., confusing terms, missing diagrams, incomplete points)."
 }
 
 IMPORTANT RULES:
-- Always answer in BOTH English and Urdu (bilingual)
-- For numericals: Always write Given Data first, then Formula, then Step-by-Step substitution, then Final Answer with SI unit
-- For short questions: Write exactly 4 numbered points to match the 4-mark rubric
-- Strictly follow KPTBB Pakistan textbook curriculum content
-- The examinerTip must warn about the most common mistake students make
-- Response must be valid JSON only — no extra text outside the JSON`;
+- Provide exhaustive, deeply structured explanations that give students everything needed to score 100% in BISE Swat.
+- Provide bilingual responses (English with complete Urdu explanation in finalAnswerUr).
+- Strictly adhere to the official KPTBB Pakistan syllabus.
+- Response must be strictly valid JSON with no markdown wrapping outside the JSON.`;
 
 export class CeronAIService {
   private static getApiKey(): string {
@@ -173,7 +216,7 @@ export class CeronAIService {
               { role: 'user', content: userPrompt },
             ],
             temperature: 0.3,
-            max_tokens: 1000,
+            max_tokens: 3500,
             response_format: { type: 'json_object' },
           }),
         });
@@ -413,9 +456,10 @@ You are evaluating a student's answer for ${req.className} in ${req.subjectName}
 
 EVALUATION CRITERIA:
 - Grade strictly, fairly, and accurately according to official Pakistani board marking schemes.
+- If an image of a handwritten answer is provided, carefully read, transcribe, and assess the student's handwriting, steps, headings, and formulas.
 - Check for precise scientific keywords, proper mathematical equations/units, logical explanation, and diagram references where applicable.
-- For 4-Mark Short Qs: 1 Mark per distinct technical point.
-- For 7-Mark Long Qs: Structured into introduction, main theory/mechanism, formula/proof, and conclusion.
+- For 4-Mark Short Qs: 1 Mark per distinct technical point / definition / example.
+- For 8-Mark Long Qs: Structured into introduction, main theory/mechanism, formula/proof, and conclusion.
 
 You MUST respond in this EXACT valid JSON format ONLY:
 {
@@ -433,38 +477,61 @@ You MUST respond in this EXACT valid JSON format ONLY:
   "modelAnswer": "Complete 4-point model answer..."
 }`;
 
-    const userPrompt = `Student Class: ${req.className}
+    const textPromptContent = `Student Class: ${req.className}
 Subject: ${req.subjectName}
 Chapter: ${req.chapterTitle}
 Exam Question (${req.maxMarks} Marks):
 "${req.questionText}"
 
-Student's Written Answer to Grade:
-"""
-${req.studentAnswer}
-"""
+${req.studentAnswer ? `Student's Written / Typed Answer:\n"""\n${req.studentAnswer}\n"""\n` : ''}
+${req.imageBase64 ? 'Please transcribe and evaluate the handwritten paper from the attached image.' : ''}
 
 Evaluate this student's answer strictly and fairly as a BISE Swat board examiner. Return valid JSON only.`;
 
+    const modelsToTry = req.imageBase64
+      ? [...VISION_MODELS, ...CANDIDATE_MODELS]
+      : CANDIDATE_MODELS;
+
     let lastError = '';
-    for (const model of CANDIDATE_MODELS) {
+    for (const model of modelsToTry) {
       try {
+        const isVision = VISION_MODELS.includes(model) && !!req.imageBase64;
+        const userContent = isVision
+          ? [
+              { type: 'text', text: textPromptContent },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: req.imageBase64!.startsWith('data:')
+                    ? req.imageBase64!
+                    : `data:image/jpeg;base64,${req.imageBase64!}`,
+                },
+              },
+            ]
+          : textPromptContent;
+
+        const requestBody: Record<string, any> = {
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userContent },
+          ],
+          temperature: 0.2,
+          max_tokens: 2500,
+        };
+
+        // Vision preview models might error with explicit json_object response_format
+        if (!isVision) {
+          requestBody.response_format = { type: 'json_object' };
+        }
+
         const res = await fetch(GROQ_API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${key}`,
           },
-          body: JSON.stringify({
-            model,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt },
-            ],
-            response_format: { type: 'json_object' },
-            temperature: 0.2,
-            max_tokens: 2000,
-          }),
+          body: JSON.stringify(requestBody),
         });
 
         if (!res.ok) {
@@ -480,7 +547,6 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
         try {
           parsed = JSON.parse(rawText);
         } catch {
-          // If wrapped or surrounded by text, extract JSON substring
           const jsonMatch = rawText.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             try {
@@ -529,6 +595,180 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
       examinerTips: '',
       modelAnswer: '',
       error: lastError,
+    };
+  }
+
+  static async generatePaperCheckerQuestions(
+    unit: any,
+    subjectName: string,
+    className: string,
+    forceAIGenerate: boolean = false
+  ): Promise<PaperCheckerQuestionsResult> {
+    // 1. If not forced to generate dynamically, check existing curriculum questions first
+    if (!forceAIGenerate && unit) {
+      const pastPapers: any[] = unit.pastPaperQuestions || [];
+      const solved: any[] = unit.solvedExercises || [];
+
+      const candidateShort = pastPapers.find((p) => p.marks <= 4 || /section b/i.test(p.section || ''))
+        || solved.find((s) => s.marks <= 4 || s.category === 'conceptual' || s.category === 'short_question');
+
+      const candidateLong = pastPapers.find((p) => p.marks >= 7 || /section c/i.test(p.section || ''))
+        || solved.find((s) => s.marks >= 7 || s.category === 'long_question' || s.category === 'numerical');
+
+      if (candidateShort && candidateLong) {
+        return {
+          shortQ: {
+            id: 'curriculum-short-1',
+            type: 'short',
+            marks: 4,
+            section: 'Section B (Short Question - 4 Marks)',
+            questionEn: candidateShort.questionEn || candidateShort.titleEn,
+            questionUr: candidateShort.questionUr || candidateShort.titleUr || '',
+            modelAnswerEn: candidateShort.modelAnswerEn || candidateShort.finalAnswer || '',
+            modelAnswerUr: candidateShort.modelAnswerUr || '',
+            boardTip: candidateShort.boardTipEn || 'State 4 distinct technical points with proper terminology.',
+          },
+          longQ: {
+            id: 'curriculum-long-1',
+            type: 'long',
+            marks: 8,
+            section: 'Section C (Extensive Question - 8 Marks)',
+            questionEn: candidateLong.questionEn || candidateLong.titleEn,
+            questionUr: candidateLong.questionUr || candidateLong.titleUr || '',
+            modelAnswerEn: candidateLong.modelAnswerEn || candidateLong.finalAnswer || '',
+            modelAnswerUr: candidateLong.modelAnswerUr || '',
+            boardTip: candidateLong.boardTipEn || 'Provide introduction, mathematical equation/diagram, mechanism, and conclusion.',
+          },
+        };
+      }
+    }
+
+    // 2. Dynamic AI Generation via Groq
+    const key = this.getApiKey();
+    if (this.isConfigured() && key) {
+      const systemPrompt = `You are a Senior Paper Setter for the BISE Swat Board and Khyber Pakhtunkhwa Textbook Board (KPTBB).
+Generate TWO authentic, high-yield board examination questions for ${className}, Subject: ${subjectName}, Chapter: "${unit?.titleEn || 'Curriculum'}".
+
+REQUIREMENTS:
+1. Short Question (Section B): 4 Marks. Conceptual / reasoning / short derivation with 4 distinct marking points.
+2. Long Question (Section C): 8 Marks. In-depth extensive question requiring structured derivation, mechanism, or comprehensive explanation.
+3. Include both English and Urdu translations for both questions.
+4. Include the complete official 100% textbook model answer for each question.
+
+You MUST respond in this EXACT valid JSON format ONLY:
+{
+  "shortQ": {
+    "questionEn": "...",
+    "questionUr": "...",
+    "marks": 4,
+    "section": "Section B (Short Question - 4 Marks)",
+    "modelAnswerEn": "...",
+    "modelAnswerUr": "...",
+    "keyTerms": ["...", "..."],
+    "boardTip": "..."
+  },
+  "longQ": {
+    "questionEn": "...",
+    "questionUr": "...",
+    "marks": 8,
+    "section": "Section C (Extensive Question - 8 Marks)",
+    "modelAnswerEn": "...",
+    "modelAnswerUr": "...",
+    "keyTerms": ["...", "..."],
+    "boardTip": "..."
+  }
+}`;
+
+      for (const model of CANDIDATE_MODELS) {
+        try {
+          const res = await fetch(GROQ_API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${key}`,
+            },
+            body: JSON.stringify({
+              model,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: `Generate 2 board questions for Chapter: "${unit?.titleEn || 'Curriculum'}" in ${subjectName}.` },
+              ],
+              response_format: { type: 'json_object' },
+              temperature: 0.3,
+              max_tokens: 2500,
+            }),
+          });
+
+          if (!res.ok) continue;
+          const data = await res.json();
+          const content = data.choices?.[0]?.message?.content || '{}';
+          let parsed: any = {};
+          try {
+            parsed = JSON.parse(content);
+          } catch {
+            const match = content.match(/\{[\s\S]*\}/);
+            if (match) parsed = JSON.parse(match[0]);
+          }
+
+          if (parsed.shortQ?.questionEn && parsed.longQ?.questionEn) {
+            return {
+              shortQ: {
+                id: `ai-short-${Date.now()}`,
+                type: 'short',
+                marks: 4,
+                section: 'Section B (Short Question - 4 Marks)',
+                questionEn: parsed.shortQ.questionEn,
+                questionUr: parsed.shortQ.questionUr || '',
+                modelAnswerEn: parsed.shortQ.modelAnswerEn || '',
+                modelAnswerUr: parsed.shortQ.modelAnswerUr || '',
+                keyTerms: parsed.shortQ.keyTerms || [],
+                boardTip: parsed.shortQ.boardTip || 'Answer with 4 distinct points to ensure full 4 marks.',
+              },
+              longQ: {
+                id: `ai-long-${Date.now()}`,
+                type: 'long',
+                marks: 8,
+                section: 'Section C (Extensive Question - 8 Marks)',
+                questionEn: parsed.longQ.questionEn,
+                questionUr: parsed.longQ.questionUr || '',
+                modelAnswerEn: parsed.longQ.modelAnswerEn || '',
+                modelAnswerUr: parsed.longQ.modelAnswerUr || '',
+                keyTerms: parsed.longQ.keyTerms || [],
+                boardTip: parsed.longQ.boardTip || 'Structure your answer with Introduction, Working, Formulas, and Conclusion.',
+              },
+            };
+          }
+        } catch {
+          // continue loop
+        }
+      }
+    }
+
+    // 3. Fallback High-Quality Synthesized Questions
+    const chapterTitle = unit?.titleEn || 'General Science';
+    return {
+      shortQ: {
+        id: `fallback-short-${Date.now()}`,
+        type: 'short',
+        marks: 4,
+        section: 'Section B (Short Question - 4 Marks)',
+        questionEn: `Define the fundamental scientific principle of "${chapterTitle}" and state two practical applications tested in BISE Swat board examinations.`,
+        questionUr: `عنوان "${unit?.titleUr || chapterTitle}" کے بنیادی سائنسی اصول کی تعریف کریں اور دو عملی اطلاقات بیان کریں۔`,
+        modelAnswerEn: `1. Formal Definition: Stated per standard KPTBB textbook definition with exact terminology.\n2. Governing Principle: Outlines the physical/biological mechanism.\n3. Application 1: Practical board-standard scenario.\n4. Application 2: Mathematical or everyday manifestation with SI units.`,
+        modelAnswerUr: `تعریف، سائنسی وضاحت اور دو عملی اطلاقات کتب نصاب کے مطابق۔`,
+        boardTip: 'Write clear sub-headings for Definition and Applications to secure all 4 marks.',
+      },
+      longQ: {
+        id: `fallback-long-${Date.now()}`,
+        type: 'long',
+        marks: 8,
+        section: 'Section C (Extensive Question - 8 Marks)',
+        questionEn: `Explain in comprehensive detail the mechanism and mathematical derivation/theory of "${chapterTitle}". Draw or reference the relevant schematic diagram and discuss two limitations or conditions.`,
+        questionUr: `موضوع "${unit?.titleUr || chapterTitle}" کے میکانزم اور مساوات کو تفصیل سے بیان کریں، ضروری ڈایاگرام کا حوالہ دیں اور شرائط واضح کریں۔`,
+        modelAnswerEn: `1. Comprehensive Introduction & Scope (2 Marks)\n2. Theoretical Working & Mechanism (2 Marks)\n3. Mathematical Formula / Proof / Balanced Equation (2 Marks)\n4. Limitations, Conditions & Board Examination Summary (2 Marks)`,
+        modelAnswerUr: `تفصیلی تعارف، سائنسی میکانزم، حسابی فارمولا اور امتحانی نتائج۔`,
+        boardTip: 'Ensure a neat labeled diagram and state governing formulas in a distinct boxed highlight.',
+      },
     };
   }
 
@@ -685,21 +925,30 @@ function formatAIResponse(
     };
   }
 
-  // Conceptual / short question
+  // Conceptual / descriptive / long question
+  const stepsRaw = (parsed.steps as string[]) || [];
   const answer = (parsed.answer as string) || '';
-  const answerUr = (parsed.answerUr as string) || '';
-  const points = answer
-    .split('\n')
-    .map((p: string) => p.trim())
-    .filter(Boolean);
+  const finalAnswer = (parsed.finalAnswer as string) || answer || '';
+  const answerUr = (parsed.finalAnswerUr as string) || (parsed.answerUr as string) || '';
+
+  let points: string[] = [];
+  if (Array.isArray(stepsRaw) && stepsRaw.length > 0) {
+    points = stepsRaw;
+  } else if (answer) {
+    points = answer
+      .split('\n')
+      .map((p: string) => p.trim())
+      .filter(Boolean);
+  }
 
   return {
     success: true,
     questionTitle: question,
     marks,
     rubric,
+    formula: (parsed.formula as string) || undefined,
     stepByStepSolution: points,
-    finalAnswerEn: answer,
+    finalAnswerEn: finalAnswer,
     finalAnswerUr: answerUr,
     examinerTip: (parsed.examinerTip as string) || '',
     rawText,

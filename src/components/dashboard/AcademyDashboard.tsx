@@ -107,8 +107,11 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
       {/* ── 2. Board Exam Overview & Quick Action Hero ── */}
       <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1.5">
-            <GraduationCap size={14} className="text-indigo-600" /> {profile.className}
+          <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1.5 max-w-full truncate">
+            <GraduationCap size={14} className="text-indigo-600 shrink-0" />
+            <span className="truncate">
+              {profile.className.replace(/\(.*?\)/g, '').trim()} &bull; {profile.className.match(/\((.*?)\)/)?.[1] || 'Curriculum'}
+            </span>
           </span>
           <span className="text-xs font-semibold text-slate-500 bg-slate-50 px-3 py-1 rounded-full border border-slate-200 flex items-center gap-1">
             <Clock size={12} /> BISE Swat &amp; KPTBB Syllabus
@@ -171,11 +174,10 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
                   soundEngine.playPop();
                   setSelectedSubjectId(sub.id);
                 }}
-                className={`shrink-0 px-4 py-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2 snap-start ${
-                  isSelected
+                className={`shrink-0 px-4 py-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2 snap-start ${isSelected
                     ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm font-bold scale-[1.02]'
                     : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50 font-semibold'
-                }`}
+                  }`}
               >
                 <span className="text-lg">{sub.icon}</span>
                 <span className="text-xs sm:text-sm whitespace-nowrap">{sub.nameEn}</span>

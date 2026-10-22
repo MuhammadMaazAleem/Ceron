@@ -1,7 +1,7 @@
 import React from 'react';
 import { AgeBand } from '../../types';
 import { soundEngine } from '../../services/soundEngine';
-import { BookOpen, Sparkles, FileText } from 'lucide-react';
+import { BookOpen, Sparkles, FileText, ClipboardCheck } from 'lucide-react';
 
 interface BottomBarProps {
   ageBand: AgeBand;
@@ -59,18 +59,19 @@ export const BottomBar: React.FC<BottomBarProps> = ({
             backgroundColor: activeTab === 'home' ? '#F1F5F9' : 'transparent',
             color: activeTab === 'home' ? '#0F172A' : '#64748B',
             fontWeight: activeTab === 'home' ? 800 : 500,
+            border: 'none',
           }}
         >
           <BookOpen size={18} style={{ color: activeTab === 'home' ? '#0F172A' : '#94A3B8' }} />
           <span style={{ fontSize: '11px', lineHeight: 1.2 }}>Syllabus</span>
         </button>
 
-        {/* Tab 2: Ask AI Tutor (Center Highlight) */}
+        {/* Tab 2: Ask AI Tutor */}
         <button
           onClick={() => handleTab('tutor')}
           style={{
-            flex: 1.15,
-            padding: '6px 8px',
+            flex: 1,
+            padding: '6px 4px',
             borderRadius: '12px',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
@@ -82,14 +83,38 @@ export const BottomBar: React.FC<BottomBarProps> = ({
             backgroundColor: activeTab === 'tutor' ? '#7C3AED' : '#F5F3FF',
             color: activeTab === 'tutor' ? '#FFFFFF' : '#6D28D9',
             fontWeight: 700,
-            boxShadow: activeTab === 'tutor' ? '0 2px 8px rgba(124, 58, 237, 0.3)' : 'none',
+            boxShadow: activeTab === 'tutor' ? '0 2px 8px rgba(124, 58, 237, 0.25)' : 'none',
           }}
         >
-          <Sparkles size={18} style={{ color: activeTab === 'tutor' ? '#FFFFFF' : '#7C3AED' }} />
-          <span style={{ fontSize: '11px', lineHeight: 1.2 }}>Ask AI Tutor</span>
+          <Sparkles size={17} style={{ color: activeTab === 'tutor' ? '#FFFFFF' : '#7C3AED' }} />
+          <span style={{ fontSize: '10.5px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>AI Tutor</span>
         </button>
 
-        {/* Tab 3: Mock Exams */}
+        {/* Tab 3: AI Paper Checker (Examiner) */}
+        <button
+          onClick={() => handleTab('checker')}
+          style={{
+            flex: 1,
+            padding: '6px 4px',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            border: activeTab === 'checker' ? 'none' : '1px solid #EADCCB',
+            backgroundColor: activeTab === 'checker' ? '#825E38' : '#FAF6EE',
+            color: activeTab === 'checker' ? '#FFFFFF' : '#825E38',
+            fontWeight: 700,
+            boxShadow: activeTab === 'checker' ? '0 2px 8px rgba(130, 94, 56, 0.25)' : 'none',
+          }}
+        >
+          <ClipboardCheck size={17} style={{ color: activeTab === 'checker' ? '#FFFFFF' : '#825E38' }} />
+          <span style={{ fontSize: '10.5px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>Paper Checker</span>
+        </button>
+
+        {/* Tab 4: Mock Exams */}
         <button
           onClick={() => handleTab('mock')}
           style={{
@@ -108,8 +133,8 @@ export const BottomBar: React.FC<BottomBarProps> = ({
             fontWeight: activeTab === 'mock' ? 700 : 500,
           }}
         >
-          <FileText size={18} style={{ color: activeTab === 'mock' ? '#059669' : '#94A3B8' }} />
-          <span style={{ fontSize: '11px', lineHeight: 1.2 }}>20-MCQ Exam</span>
+          <FileText size={17} style={{ color: activeTab === 'mock' ? '#059669' : '#94A3B8' }} />
+          <span style={{ fontSize: '10.5px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>20-MCQ Exam</span>
         </button>
       </div>
     </nav>

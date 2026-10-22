@@ -15,14 +15,23 @@ import { DedicationSplashModal } from './components/common/DedicationSplashModal
 import { generate50McqQuizForUnit } from './services/aiQuizGenerator';
 import { SubjectAIPanel } from './components/tutor/SubjectAIPanel';
 import { CeronAIClaudeView } from './components/tutor/CeronAIClaudeView';
+import { AIPaperCheckerView } from './components/checker/AIPaperCheckerView';
 import { AppTourVideoModal } from './components/common/AppTourVideoModal';
 import { ClassSelectionPortal } from './components/common/ClassSelectionPortal';
+import { NavigationRouter, AppRoute } from './services/navigationRouter';
 
 export const App: React.FC = () => {
   const [activeProfile, setActiveProfile] = useState<LearnerProfile>(StorageService.getActiveProfile());
   const [units, setUnits] = useState<Unit[]>(StorageService.getUnits());
   const [languagePref, setLanguagePref] = useState<'en' | 'ur'>('en');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  // Navigation and view states
+  const [activeView, setActiveView] = useState<'dashboard' | 'chapter' | 'lesson' | 'quiz'>('dashboard');
+  const [activeTab, setActiveTab] = useState<string>('home');
+  const [activeUnit, setActiveUnit] = useState<Unit | null>(null);
+  const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
+  const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
 
   // Class Selection Screen (Shown on first visit or when user clicks Change Class)
   const [isSelectingClass, setIsSelectingClass] = useState<boolean>(
@@ -32,13 +41,6 @@ export const App: React.FC = () => {
   // Dedication to Baba Jan & Mor Jan (Opened on-demand via Nav Bar)
   const [isDedicationOpen, setIsDedicationOpen] = useState<boolean>(false);
   const [isTourOpen, setIsTourOpen] = useState<boolean>(false);
-
-  // Navigation states
-  const [activeView, setActiveView] = useState<'dashboard' | 'chapter' | 'lesson' | 'quiz'>('dashboard');
-  const [activeTab, setActiveTab] = useState<string>('home');
-  const [activeUnit, setActiveUnit] = useState<Unit | null>(null);
-  const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
-  const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
 
   // Apply dark mode & age band tokens to document body
   useEffect(() => {
@@ -51,8 +53,96 @@ export const App: React.FC = () => {
     }
   }, [activeProfile.ageBand, isDarkMode]);
 
+  // Synchronize URL Hash routing with application state & support browser back button
+  useEffect(() => {
+    const handleHashSync = () => {
+      const route = NavigationRouter.parseHash(window.location.hash);
+
+      if (route.type === 'portal') {
+        setIsSelectingClass(true);
+        return;
+      }
+
+      setIsSelectingClass(false);
+
+      if (route.type === 'tutor') {
+        setActiveTab('tutor');
+        return;
+      }
+
+      if (route.type === 'checker') {
+        setActiveTab('checker');
+        if (route.unitId) {
+          const found = units.find((u) => u.id === route.unitId);
+          if (found) setActiveUnit(found);
+        }
+        return;
+      }
+
+      if (route.type === 'badges') {
+        setActiveTab('badges');
+        setActiveView('dashboard');
+        return;
+      }
+
+      if (route.type === 'chapter' && route.unitId) {
+        const foundUnit = units.find((u) => u.id === route.unitId);
+        if (foundUnit) {
+          setActiveUnit(foundUnit);
+          setActiveView('chapter');
+          setActiveTab('home');
+          return;
+        }
+      }
+
+      if (route.type === 'lesson' && route.unitId && route.lessonId) {
+        const foundUnit = units.find((u) => u.id === route.unitId);
+        if (foundUnit) {
+          const foundLesson = foundUnit.lessons?.find((l) => l.id === route.lessonId);
+          if (foundLesson) {
+            setActiveUnit(foundUnit);
+            setActiveLesson(foundLesson);
+            setActiveView('lesson');
+            return;
+          }
+        }
+      }
+
+      if (route.type === 'quiz' && route.quizId) {
+        const foundUnit = route.unitId ? units.find((u) => u.id === route.unitId) : undefined;
+        handleLaunchMock(foundUnit || route.quizId, false);
+        return;
+      }
+
+      if (route.type === 'dashboard') {
+        if (route.classId && route.classId !== activeProfile.classId) {
+          handleSelectClass(route.classId, false);
+        }
+        setActiveView('dashboard');
+        setActiveTab('home');
+        setActiveUnit(null);
+        setActiveLesson(null);
+        setActiveQuiz(null);
+      }
+    };
+
+    // Initial sync
+    if (window.location.hash) {
+      handleHashSync();
+    } else {
+      if (isSelectingClass) {
+        NavigationRouter.replace({ type: 'portal' });
+      } else {
+        NavigationRouter.replace({ type: 'dashboard', classId: activeProfile.classId });
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashSync);
+    return () => window.removeEventListener('hashchange', handleHashSync);
+  }, [units, activeProfile.classId]);
+
   // Handle switching class directly (9th to 12th)
-  const handleSelectClass = (classId: string) => {
+  const handleSelectClass = (classId: string, updateHash: boolean = true) => {
     const matched = ALL_CLASSES.find((c) => c.id === classId);
     if (!matched) return;
 
@@ -71,20 +161,27 @@ export const App: React.FC = () => {
     }));
 
     setActiveView('dashboard');
+    setActiveTab('home');
     setActiveUnit(null);
     setActiveLesson(null);
     setActiveQuiz(null);
+
+    if (updateHash) {
+      NavigationRouter.push({ type: 'dashboard', classId: matched.id });
+    }
   };
 
   // Launch a Chapter (shows all sequential topics, formulas, past papers, quiz)
   const handleSelectUnit = (unit: Unit) => {
     setActiveUnit(unit);
     setActiveView('chapter');
+    setActiveTab('home');
+    NavigationRouter.push({ type: 'chapter', unitId: unit.id });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Launch AI 50-MCQ Mock Test for any Unit / Chapter
-  const handleLaunchMock = (quizIdOrUnit?: string | Unit) => {
+  const handleLaunchMock = (quizIdOrUnit?: string | Unit, updateHash: boolean = true) => {
     let targetUnit: Unit | undefined = activeUnit || undefined;
 
     if (typeof quizIdOrUnit === 'object' && quizIdOrUnit) {
@@ -106,6 +203,13 @@ export const App: React.FC = () => {
       setActiveQuiz(ai50Quiz);
       setActiveUnit(targetUnit);
       setActiveView('quiz');
+      if (updateHash) {
+        NavigationRouter.push({
+          type: 'quiz',
+          quizId: targetUnit.quizId || targetUnit.id,
+          unitId: targetUnit.id,
+        });
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -125,8 +229,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-between selection:bg-purple-200">
-      {/* Top Header with simple Class badge - Hidden when in AI Tutor or Class Picker */}
-      {activeTab !== 'tutor' && !isSelectingClass && (
+      {/* Top Header with simple Class badge - Hidden when in AI Tutor or Paper Checker or Class Picker */}
+      {activeTab !== 'tutor' && activeTab !== 'checker' && !isSelectingClass && (
         <Header
           activeProfile={activeProfile}
           languagePref={languagePref}
@@ -134,17 +238,17 @@ export const App: React.FC = () => {
           onToggleLanguage={() => setLanguagePref((p) => (p === 'en' ? 'ur' : 'en'))}
           onToggleTheme={() => setIsDarkMode((d) => !d)}
           onOpenDedication={() => setIsDedicationOpen(true)}
-          onOpenClassPicker={() => setIsSelectingClass(true)}
+          onOpenClassPicker={() => NavigationRouter.push({ type: 'portal' })}
         />
       )}
 
       {/* Main Content Area */}
-      <main className={activeTab === 'tutor' || isSelectingClass ? 'flex-1 w-full p-0 m-0' : 'flex-1 max-w-4xl w-full mx-auto px-4 py-6'}>
+      <main className={activeTab === 'tutor' || activeTab === 'checker' || isSelectingClass ? 'flex-1 w-full p-0 m-0' : 'flex-1 max-w-4xl w-full mx-auto px-4 py-6'}>
         {isSelectingClass ? (
           <ClassSelectionPortal
             currentClassId={activeProfile.classId}
             canCancel={!!localStorage.getItem('ceron_has_chosen_class')}
-            onCancel={() => setIsSelectingClass(false)}
+            onCancel={() => NavigationRouter.back()}
             onSelectClass={(classId) => {
               handleSelectClass(classId);
               localStorage.setItem('ceron_has_chosen_class', 'true');
@@ -154,7 +258,15 @@ export const App: React.FC = () => {
         ) : activeTab === 'tutor' ? (
           <CeronAIClaudeView
             profile={activeProfile}
-            onExit={() => setActiveTab('home')}
+            onExit={() => NavigationRouter.back()}
+          />
+        ) : activeTab === 'checker' ? (
+          <AIPaperCheckerView
+            profile={activeProfile}
+            units={units}
+            subjects={SUBJECTS}
+            initialUnitId={activeUnit?.id}
+            onExit={() => NavigationRouter.back()}
           />
         ) : activeView === 'chapter' && activeUnit ? (
           <ChapterDetailView
@@ -163,11 +275,16 @@ export const App: React.FC = () => {
             languagePref={languagePref}
             completedLessonIds={activeProfile.completedLessons || []}
             onBack={() => {
-              setActiveView('dashboard');
+              NavigationRouter.back();
             }}
             onSelectLesson={(lesson) => {
               setActiveLesson(lesson);
               setActiveView('lesson');
+              NavigationRouter.push({
+                type: 'lesson',
+                unitId: activeUnit.id,
+                lessonId: lesson.id,
+              });
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onLaunchQuiz={(quizId) => handleLaunchMock(quizId)}
@@ -183,14 +300,17 @@ export const App: React.FC = () => {
             childId={activeProfile.id}
             languagePref={languagePref}
             onBack={() => {
-              if (activeUnit) {
-                setActiveView('chapter');
-              } else {
-                setActiveView('dashboard');
-              }
+              NavigationRouter.back();
             }}
             onSelectLesson={(lesson) => {
               setActiveLesson(lesson);
+              if (activeUnit) {
+                NavigationRouter.push({
+                  type: 'lesson',
+                  unitId: activeUnit.id,
+                  lessonId: lesson.id,
+                });
+              }
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onTakeQuiz={() => {
@@ -203,19 +323,15 @@ export const App: React.FC = () => {
             childId={activeProfile.id}
             onRegenerateAiQuiz={handleRegenerateCurrentQuiz}
             onExit={() => {
-              if (activeUnit) {
-                setActiveView('chapter');
-              } else {
-                setActiveView('dashboard');
-              }
+              NavigationRouter.back();
               setActiveQuiz(null);
             }}
           />
         ) : activeTab === 'badges' ? (
           <BadgesView profile={activeProfile} />
         ) : activeTab === 'mock' ? (
-          <div className="max-w-3xl mx-auto py-6 px-2 sm:px-4">
-            <div className="pearl-card p-6 text-center bg-white border border-slate-200 shadow-md rounded-2xl mb-6">
+          <div className="max-w-3xl mx-auto py-4 sm:py-6 px-1 sm:px-4">
+            <div className="pearl-card p-4 sm:p-6 text-center bg-white border border-slate-200 shadow-md rounded-2xl mb-6 overflow-hidden">
               <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-purple-100 text-purple-700 border border-purple-200 inline-block mb-2">
                 ✨ Official BISE Swat 20 MCQs Examination (Simple to Hard)
               </span>
@@ -225,17 +341,17 @@ export const App: React.FC = () => {
               <p className="text-xs sm:text-sm text-slate-600 mb-6 font-medium max-w-xl mx-auto leading-relaxed">
                 Choose any chapter below to launch an instant AI-generated 20-MCQ board examination calibrated progressively from Simple (Recall &amp; Definitions) to Medium (Formulas) to Hard (Calculations).
               </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-left">
                 {displayedUnits.map((u) => {
                   const sub = SUBJECTS.find((s) => s.id === u.subjectId);
                   return (
                     <button
                       key={u.id}
                       onClick={() => handleLaunchMock(u)}
-                      className="p-3.5 rounded-xl border border-slate-200 hover:border-purple-400 hover:bg-purple-50/50 transition cursor-pointer flex items-center justify-between group shadow-xs hover:shadow-sm"
+                      className="w-full p-3 sm:p-3.5 rounded-xl border border-slate-200 hover:border-purple-400 hover:bg-purple-50/50 transition cursor-pointer flex items-center justify-between group shadow-xs hover:shadow-sm overflow-hidden box-border"
                     >
-                      <div className="min-w-0 pr-2">
+                      <div className="flex-1 min-w-0 pr-2 overflow-hidden text-left">
                         <div className="flex items-center gap-1.5 mb-0.5">
                           <span className="text-[10px] font-bold uppercase px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">
                             {sub?.nameEn || 'STEM'}
@@ -244,15 +360,15 @@ export const App: React.FC = () => {
                             Unit {u.unitNumber}
                           </span>
                         </div>
-                        <h4 className="text-xs font-bold text-slate-800 truncate group-hover:text-purple-900">
+                        <h4 className="text-xs font-bold text-slate-800 truncate block group-hover:text-purple-900">
                           {u.titleEn}
                         </h4>
-                        <p className="text-[10px] font-nastaliq text-slate-500 truncate" dir="rtl">
+                        <p className="text-[10px] font-nastaliq text-slate-500 truncate block" dir="rtl">
                           {u.titleUr}
                         </p>
                       </div>
-                      <span className="text-xs font-bold text-purple-700 shrink-0 bg-purple-100 group-hover:bg-purple-200 px-2.5 py-1 rounded-lg border border-purple-200">
-                        20 MCQs →
+                      <span className="text-[10.5px] sm:text-xs font-bold text-purple-700 shrink-0 bg-purple-100 group-hover:bg-purple-200 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-purple-200 whitespace-nowrap ml-1">
+                        20 MCQs
                       </span>
                     </button>
                   );
@@ -274,20 +390,21 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Adaptive Bottom Navigation Bar - Hidden when in AI Tutor or Class Picker */}
-      {activeView === 'dashboard' && activeTab !== 'tutor' && !isSelectingClass && (
+      {/* Adaptive Bottom Navigation Bar - Hidden when in AI Tutor or Paper Checker or Class Picker */}
+      {activeView === 'dashboard' && activeTab !== 'tutor' && activeTab !== 'checker' && !isSelectingClass && (
         <BottomBar
           ageBand={activeProfile.ageBand}
           activeTab={activeTab}
           onTabChange={(tab) => {
             if (tab === 'mock') {
-              handleLaunchMock('quiz_10_phy_1');
-            } else if (tab === 'practice') {
-              if (activeProfile.classId === 'class_1' || activeProfile.classId === 'class_kg') {
-                handleLaunchMock('quiz_1_math_1');
-              } else {
-                handleLaunchMock('quiz_10_phy_1');
-              }
+              setActiveTab('mock');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (tab === 'tutor') {
+              NavigationRouter.push({ type: 'tutor' });
+            } else if (tab === 'checker') {
+              NavigationRouter.push({ type: 'checker', unitId: activeUnit?.id });
+            } else if (tab === 'home') {
+              NavigationRouter.push({ type: 'dashboard', classId: activeProfile.classId });
             } else {
               setActiveTab(tab);
             }
@@ -317,4 +434,5 @@ export const App: React.FC = () => {
     </div>
   );
 };
+
 export default App;
