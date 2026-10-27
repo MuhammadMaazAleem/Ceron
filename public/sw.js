@@ -1,5 +1,5 @@
 // Ceron Academic Service Worker — PWA Offline & Install Support
-const CACHE_NAME = 'ceron-academic-v3';
+const CACHE_NAME = 'ceron-academic-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -39,8 +39,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET requests and external API requests (Groq API, Wikipedia, etc.)
-  if (event.request.method !== 'GET' || url.origin !== self.location.origin) {
+  // Skip non-GET, external APIs, and local dev requests (Vite HMR & source files)
+  if (
+    event.request.method !== 'GET' ||
+    url.origin !== self.location.origin ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.startsWith('/@') ||
+    url.port === '5173'
+  ) {
     return;
   }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Lesson, Unit } from '../../types';
 import { CeronAIService } from '../../services/ceronAIService';
 import { marked } from 'marked';
+import { sanitizeHtml } from '../../utils/sanitize';
 import {
   BookOpen,
   CheckCircle2,
@@ -344,7 +345,7 @@ export const DigitalTextbookReader: React.FC<DigitalTextbookReaderProps> = ({
               {/* Prose Markdown Container */}
               <div
                 className="prose prose-slate max-w-none text-slate-800 text-xs sm:text-sm leading-relaxed space-y-4 overflow-x-auto"
-                dangerouslySetInnerHTML={{ __html: parsedHtml as string }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsedHtml as string) }}
               />
             </div>
           )}
@@ -413,7 +414,7 @@ export const DigitalTextbookReader: React.FC<DigitalTextbookReaderProps> = ({
 
               <div
                 className="rounded-xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950 flex justify-center p-4 my-2"
-                dangerouslySetInnerHTML={{ __html: diagramBlock.data.svg }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(diagramBlock.data.svg) }}
               />
 
               {diagramBlock.data.captionEn && (

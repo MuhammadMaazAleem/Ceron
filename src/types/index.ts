@@ -35,11 +35,47 @@ export interface Subject {
   unitsCount: number;
 }
 
+export interface BlockData {
+  titleEn?: string;
+  titleUr?: string;
+  bodyEn?: string;
+  bodyUr?: string;
+  audioUrl?: string;
+  svg?: string;
+  imageUrl?: string;
+  captionEn?: string;
+  labels?: string[];
+  words?: Array<{ en: string; ur: string; audioUrl?: string }>;
+  items?: Array<{ mistakeEn: string; correctionEn: string; reasonEn?: string; [key: string]: unknown }>;
+  steps?: Array<{
+    stepNumber?: number;
+    titleEn?: string;
+    detailEn?: string;
+    label?: string;
+    math?: string;
+    content?: string;
+    [key: string]: unknown;
+  }>;
+  formula?: string;
+  givenData?: Array<{ symbol?: string; label?: string; value: string; unit?: string }>;
+  finalAnswerEn?: string;
+  finalAnswerUr?: string;
+  cards?: any;
+  promptEn?: string;
+  promptUr?: string;
+  options?: any;
+  correctId?: string;
+  explanationEn?: string;
+  explanationUr?: string;
+  mistakes?: any;
+  [key: string]: any;
+}
+
 export interface Block {
   id: string;
   type: 'explanation' | 'visual' | 'animation' | 'audio' | 'flashcard' | 'practice' | 'board_tip' | 'solved_example' | 'diagram' | 'common_mistakes';
   order: number;
-  data: any;
+  data: BlockData;
 }
 
 export interface Lesson {

@@ -1,5 +1,7 @@
 import { LearnerProfile, QuizAttempt, Unit } from '../types';
 import { INITIAL_PROFILES, UNITS } from '../data/curriculumData';
+import { LearnerProfileSchema, QuizAttemptSchema } from '../types/schemas';
+import { z } from 'zod';
 
 const PROFILES_KEY = 'ceron_profiles_v3';
 const ACTIVE_PROFILE_KEY = 'ceron_active_profile_id_v3';
@@ -8,19 +10,58 @@ const ATTEMPTS_KEY = 'ceron_attempts_v3';
 
 const ALLOWED_CLASSES = new Set(['class_9', 'class_10', 'class_11', 'class_12']);
 
+/**
+ * Resilient, schema-validated LocalStorage persistence service.
+ * Protects against corrupted storage, schema drifts, and quota exhaustion.
+ */
 export class StorageService {
-  // Profiles
+  /**
+   * Safe localStorage item setter with quota guard
+   */
+  private static safeSetItem(key: string, value: string): boolean {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (err) {
+      console.warn(`[StorageService] Failed to persist key "${key}" to localStorage:`, err);
+      return false;
+    }
+  }
+
+  /**
+   * Safe localStorage item getter
+   */
+  private static safeGetItem(key: string): string | null {
+    try {
+      return localStorage.getItem(key);
+    } catch (err) {
+      console.warn(`[StorageService] Failed to read key "${key}" from localStorage:`, err);
+      return null;
+    }
+  }
+
+  // -------------------------------------------------------------
+  // Learner Profiles
+  // -------------------------------------------------------------
   public static getProfiles(): LearnerProfile[] {
-    const raw = localStorage.getItem(PROFILES_KEY);
+    const raw = this.safeGetItem(PROFILES_KEY);
     if (!raw) {
-      localStorage.setItem(PROFILES_KEY, JSON.stringify(INITIAL_PROFILES));
+      this.safeSetItem(PROFILES_KEY, JSON.stringify(INITIAL_PROFILES));
       return INITIAL_PROFILES;
     }
+
     try {
-      const parsed: LearnerProfile[] = JSON.parse(raw);
-      const filtered = parsed.filter((p) => ALLOWED_CLASSES.has(p.classId));
+      const parsed = JSON.parse(raw);
+      const validation = z.array(LearnerProfileSchema).safeParse(parsed);
+
+      if (!validation.success) {
+        console.warn('[StorageService] Stored profiles failed schema validation; falling back to default:', validation.error);
+        return INITIAL_PROFILES;
+      }
+
+      const filtered = validation.data.filter((p) => ALLOWED_CLASSES.has(p.classId)) as LearnerProfile[];
       if (filtered.length === 0) {
-        localStorage.setItem(PROFILES_KEY, JSON.stringify(INITIAL_PROFILES));
+        this.safeSetItem(PROFILES_KEY, JSON.stringify(INITIAL_PROFILES));
         return INITIAL_PROFILES;
       }
       return filtered;
@@ -29,22 +70,27 @@ export class StorageService {
     }
   }
 
-  public static saveProfiles(profiles: LearnerProfile[]) {
-    localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+  public static saveProfiles(profiles: LearnerProfile[]): void {
+    this.safeSetItem(PROFILES_KEY, JSON.stringify(profiles));
   }
 
   public static getActiveProfile(): LearnerProfile {
     const profiles = this.getProfiles();
-    const activeId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    const activeId = this.safeGetItem(ACTIVE_PROFILE_KEY);
     const found = profiles.find((p) => p.id === activeId && ALLOWED_CLASSES.has(p.classId));
     return found || profiles[0] || INITIAL_PROFILES[0];
   }
 
-  public static setActiveProfile(id: string) {
-    localStorage.setItem(ACTIVE_PROFILE_KEY, id);
+  public static setActiveProfile(id: string): void {
+    this.safeSetItem(ACTIVE_PROFILE_KEY, id);
   }
 
-  public static setProfileClass(childId: string, classId: string, className: string, ageBand: LearnerProfile['ageBand']) {
+  public static setProfileClass(
+    childId: string,
+    classId: string,
+    className: string,
+    ageBand: LearnerProfile['ageBand']
+  ): void {
     const profiles = this.getProfiles();
     const target = profiles.find((p) => p.id === childId);
     if (target) {
@@ -55,7 +101,9 @@ export class StorageService {
     }
   }
 
-  public static addProfile(profile: Omit<LearnerProfile, 'id' | 'streakDays' | 'xp' | 'completedLessons' | 'badges'>): LearnerProfile {
+  public static addProfile(
+    profile: Omit<LearnerProfile, 'id' | 'streakDays' | 'xp' | 'completedLessons' | 'badges'>
+  ): LearnerProfile {
     const profiles = this.getProfiles();
     const newProfile: LearnerProfile = {
       ...profile,
@@ -71,8 +119,7 @@ export class StorageService {
     return newProfile;
   }
 
-  // Update learner progress
-  public static completeLesson(childId: string, lessonId: string, xpEarned: number = 25) {
+  public static completeLesson(childId: string, lessonId: string, xpEarned: number = 25): void {
     const profiles = this.getProfiles();
     const profile = profiles.find((p) => p.id === childId);
     if (profile) {
@@ -84,31 +131,48 @@ export class StorageService {
     }
   }
 
-  // Custom Units / CMS added data
+  // -------------------------------------------------------------
+  // Custom Units / Curriculum Storage
+  // -------------------------------------------------------------
   public static getUnits(): Unit[] {
-    const raw = localStorage.getItem(CUSTOM_UNITS_KEY);
+    const raw = this.safeGetItem(CUSTOM_UNITS_KEY);
     if (!raw) {
       return UNITS;
     }
     try {
       const custom: Unit[] = JSON.parse(raw);
-      return [...UNITS, ...custom];
+      if (Array.isArray(custom)) {
+        return [...UNITS, ...custom];
+      }
+      return UNITS;
     } catch {
       return UNITS;
     }
   }
 
-  public static addCustomUnit(unit: Unit) {
-    const raw = localStorage.getItem(CUSTOM_UNITS_KEY);
-    const customList: Unit[] = raw ? JSON.parse(raw) : [];
+  public static addCustomUnit(unit: Unit): void {
+    const raw = this.safeGetItem(CUSTOM_UNITS_KEY);
+    let customList: Unit[] = [];
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) customList = parsed;
+      } catch {
+        customList = [];
+      }
+    }
     customList.push(unit);
-    localStorage.setItem(CUSTOM_UNITS_KEY, JSON.stringify(customList));
+    this.safeSetItem(CUSTOM_UNITS_KEY, JSON.stringify(customList));
   }
 
-  // Quiz Attempts & Pass/Fail evaluation (Strict 33% standard)
-  public static recordAttempt(attempt: Omit<QuizAttempt, 'id' | 'percentage' | 'passed' | 'grade' | 'date'>): QuizAttempt {
+  // -------------------------------------------------------------
+  // Quiz Attempts & Evaluation
+  // -------------------------------------------------------------
+  public static recordAttempt(
+    attempt: Omit<QuizAttempt, 'id' | 'percentage' | 'passed' | 'grade' | 'date'>
+  ): QuizAttempt {
     const percentage = Math.round((attempt.score / attempt.total) * 100);
-    const passed = percentage >= 33; // 33% Pass mark
+    const passed = percentage >= 33; // 33% Standard Pass mark
 
     let grade: QuizAttempt['grade'] = 'F';
     if (percentage >= 80) grade = 'A-1';
@@ -127,10 +191,9 @@ export class StorageService {
       date: new Date().toISOString(),
     };
 
-    const raw = localStorage.getItem(ATTEMPTS_KEY);
-    const list: QuizAttempt[] = raw ? JSON.parse(raw) : [];
+    const list = this.getAttempts();
     list.unshift(fullAttempt);
-    localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(list));
+    this.safeSetItem(ATTEMPTS_KEY, JSON.stringify(list));
 
     if (passed) {
       const profiles = this.getProfiles();
@@ -145,11 +208,19 @@ export class StorageService {
   }
 
   public static getAttempts(childId?: string): QuizAttempt[] {
-    const raw = localStorage.getItem(ATTEMPTS_KEY);
-    const list: QuizAttempt[] = raw ? JSON.parse(raw) : [];
-    if (childId) {
-      return list.filter((a) => a.childId === childId);
+    const raw = this.safeGetItem(ATTEMPTS_KEY);
+    if (!raw) return [];
+
+    try {
+      const parsed = JSON.parse(raw);
+      const validation = z.array(QuizAttemptSchema).safeParse(parsed);
+      const list = validation.success ? (validation.data as QuizAttempt[]) : [];
+      if (childId) {
+        return list.filter((a) => a.childId === childId);
+      }
+      return list;
+    } catch {
+      return [];
     }
-    return list;
   }
 }

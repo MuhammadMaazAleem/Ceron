@@ -3,6 +3,7 @@ import { Unit, Subject } from '../../types';
 import { CeronAIService, CramSheetResult } from '../../services/ceronAIService';
 import { soundEngine } from '../../services/soundEngine';
 import { marked } from 'marked';
+import { sanitizeHtml } from '../../utils/sanitize';
 import {
   Printer,
   Sparkles,
@@ -211,7 +212,7 @@ export const ExamNightCramSheetView: React.FC<ExamNightCramSheetViewProps> = ({
           <div
             className="prose max-w-none text-slate-800 text-xs sm:text-sm"
             dangerouslySetInnerHTML={{
-              __html: marked.parse(sheet.markdownContent) as string,
+              __html: sanitizeHtml(marked.parse(sheet.markdownContent) as string),
             }}
           />
 

@@ -1,7 +1,5 @@
-// ============================================================
-// Ceron AI Service — Groq API Integration
-// Powers the Board Exam Tutor & Homework Solver
-// ============================================================
+import { env } from '../config/env';
+import { Unit, SolvedExerciseItem, PastPaperQuestion } from '../types';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
@@ -170,7 +168,25 @@ IMPORTANT RULES:
 
 export class CeronAIService {
   private static getApiKey(): string {
-    return import.meta.env.VITE_GROQ_API_KEY || '';
+    return env.VITE_GROQ_API_KEY || '';
+  }
+
+  /**
+   * Resilient fetch wrapper with AbortController timeout protection.
+   * Ensures API requests never hang indefinitely on unstable/slow networks.
+   */
+  private static async fetchWithTimeout(
+    url: string,
+    options: RequestInit,
+    timeoutMs: number = 30000
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   static isConfigured(): boolean {
@@ -203,7 +219,7 @@ export class CeronAIService {
     // Loop through available models in case one fails or has a temporary limit
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await fetch(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(GROQ_API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -390,7 +406,7 @@ Ensure the tone is crystal clear and simple for beginners, with real-world analo
     let lastError = '';
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await fetch(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(GROQ_API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -525,7 +541,7 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
           requestBody.response_format = { type: 'json_object' };
         }
 
-        const res = await fetch(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(GROQ_API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -599,15 +615,15 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
   }
 
   static async generatePaperCheckerQuestions(
-    unit: any,
+    unit: Unit | undefined,
     subjectName: string,
     className: string,
     forceAIGenerate: boolean = false
   ): Promise<PaperCheckerQuestionsResult> {
     // 1. If not forced to generate dynamically, check existing curriculum questions first
     if (!forceAIGenerate && unit) {
-      const pastPapers: any[] = unit.pastPaperQuestions || [];
-      const solved: any[] = unit.solvedExercises || [];
+      const pastPapers: PastPaperQuestion[] = unit.pastPaperQuestions || [];
+      const solved: SolvedExerciseItem[] = unit.solvedExercises || [];
 
       const candidateShort = pastPapers.find((p) => p.marks <= 4 || /section b/i.test(p.section || ''))
         || solved.find((s) => s.marks <= 4 || s.category === 'conceptual' || s.category === 'short_question');
@@ -616,28 +632,39 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
         || solved.find((s) => s.marks >= 7 || s.category === 'long_question' || s.category === 'numerical');
 
       if (candidateShort && candidateLong) {
+        const getQEn = (item: PastPaperQuestion | SolvedExerciseItem) =>
+          'questionEn' in item && item.questionEn ? item.questionEn : ('titleEn' in item ? item.titleEn : '');
+        const getQUr = (item: PastPaperQuestion | SolvedExerciseItem) =>
+          'questionUr' in item && item.questionUr ? item.questionUr : ('titleUr' in item && item.titleUr ? item.titleUr : '');
+        const getModelEn = (item: PastPaperQuestion | SolvedExerciseItem) =>
+          'modelAnswerEn' in item && item.modelAnswerEn ? item.modelAnswerEn : '';
+        const getModelUr = (item: PastPaperQuestion | SolvedExerciseItem) =>
+          'modelAnswerUr' in item && item.modelAnswerUr ? item.modelAnswerUr : '';
+        const getTip = (item: PastPaperQuestion | SolvedExerciseItem, fallback: string) =>
+          'boardTipEn' in item && item.boardTipEn ? item.boardTipEn : fallback;
+
         return {
           shortQ: {
             id: 'curriculum-short-1',
             type: 'short',
             marks: 4,
             section: 'Section B (Short Question - 4 Marks)',
-            questionEn: candidateShort.questionEn || candidateShort.titleEn,
-            questionUr: candidateShort.questionUr || candidateShort.titleUr || '',
-            modelAnswerEn: candidateShort.modelAnswerEn || candidateShort.finalAnswer || '',
-            modelAnswerUr: candidateShort.modelAnswerUr || '',
-            boardTip: candidateShort.boardTipEn || 'State 4 distinct technical points with proper terminology.',
+            questionEn: getQEn(candidateShort),
+            questionUr: getQUr(candidateShort),
+            modelAnswerEn: getModelEn(candidateShort),
+            modelAnswerUr: getModelUr(candidateShort),
+            boardTip: getTip(candidateShort, 'State 4 distinct technical points with proper terminology.'),
           },
           longQ: {
             id: 'curriculum-long-1',
             type: 'long',
             marks: 8,
             section: 'Section C (Extensive Question - 8 Marks)',
-            questionEn: candidateLong.questionEn || candidateLong.titleEn,
-            questionUr: candidateLong.questionUr || candidateLong.titleUr || '',
-            modelAnswerEn: candidateLong.modelAnswerEn || candidateLong.finalAnswer || '',
-            modelAnswerUr: candidateLong.modelAnswerUr || '',
-            boardTip: candidateLong.boardTipEn || 'Provide introduction, mathematical equation/diagram, mechanism, and conclusion.',
+            questionEn: getQEn(candidateLong),
+            questionUr: getQUr(candidateLong),
+            modelAnswerEn: getModelEn(candidateLong),
+            modelAnswerUr: getModelUr(candidateLong),
+            boardTip: getTip(candidateLong, 'Provide introduction, mathematical equation/diagram, mechanism, and conclusion.'),
           },
         };
       }
@@ -819,7 +846,7 @@ ${isBiology
     let lastError = '';
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await fetch(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(GROQ_API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

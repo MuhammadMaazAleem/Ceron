@@ -13,6 +13,7 @@ import { FlashcardDeck } from './FlashcardDeck';
 import { PracticeQuestion } from './PracticeQuestion';
 import { soundEngine } from '../../services/soundEngine';
 import { BookOpen, Volume2, Bookmark, Lightbulb, CheckSquare, Eye, AlertTriangle } from 'lucide-react';
+import { sanitizeHtml } from '../../utils/sanitize';
 
 interface BlockRendererProps {
   blocks: Block[];
@@ -107,13 +108,13 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, languagePr
             );
 
           case 'flashcard':
-            return <FlashcardDeck key={block.id} data={block.data} />;
+            return <FlashcardDeck key={block.id} data={block.data as any} />;
 
           case 'practice':
-            return <PracticeQuestion key={block.id} data={block.data} />;
+            return <PracticeQuestion key={block.id} data={block.data as any} />;
 
           // Rich Visual / SVG Diagram Block
-          case 'diagram' as any:
+          case 'diagram':
             return (
               <div key={block.id} className="pearl-card p-5 bg-white border border-slate-200 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
@@ -129,7 +130,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, languagePr
                 {block.data.svg ? (
                   <div
                     className="my-3 flex justify-center bg-slate-900/5 p-3 rounded-xl border border-slate-100 overflow-x-auto"
-                    dangerouslySetInnerHTML={{ __html: block.data.svg }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.data.svg) }}
                   />
                 ) : block.data.imageUrl ? (
                   <img src={block.data.imageUrl} alt={block.data.titleEn} className="w-full rounded-xl my-3" />
@@ -141,7 +142,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, languagePr
             );
 
           // Common Mistakes in BISE Exams
-          case 'common_mistakes' as any:
+          case 'common_mistakes':
             return (
               <div key={block.id} className="pearl-card p-4.5 bg-rose-50/40 border border-rose-300">
                 <div className="flex items-center gap-2 mb-2 text-rose-800 font-black text-xs uppercase tracking-wider">
@@ -169,7 +170,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, languagePr
             );
 
           // Rich Board Exam Tip Block
-          case 'board_tip' as any:
+          case 'board_tip':
             return (
               <div
                 key={block.id}
@@ -188,7 +189,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, languagePr
             );
 
           // Solved Numerical or Worked Example
-          case 'solved_example' as any:
+          case 'solved_example':
             return (
               <div
                 key={block.id}
