@@ -1,12 +1,4 @@
-/**
- * Vercel Edge Function — Groq AI Proxy
- * 
- * This keeps the GROQ_API_KEY server-side only.
- * The client calls /api/ai instead of calling Groq directly.
- * 
- * Deploy: The GROQ_API_KEY environment variable is set in Vercel Dashboard
- *         (Settings → Environment Variables) — never in .env committed to git.
- */
+
 export const config = { runtime: 'edge' };
 
 declare const process: {
