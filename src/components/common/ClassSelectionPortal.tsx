@@ -71,19 +71,19 @@ export const ClassSelectionPortal: React.FC<ClassSelectionPortalProps> = ({
           <CeronLogo size={46} />
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold my-1">
           <GraduationCap size={14} />
           <span>BISE Swat Academic Curriculum</span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1 mb-2">
           Select Your Class to Begin
         </h1>
         <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto font-normal leading-relaxed">
           Choose your grade below to access your syllabus, interactive chapter guides, step-by-step solved exercises, and personalized 24/7 AI board tutor.
         </p>
 
-        <p className="text-xs text-slate-500 font-nastaliq" dir="rtl">
+        <p className="text-xs sm:text-sm text-slate-500 font-nastaliq text-center mx-auto mt-1" dir="rtl">
           اپنے مطالعے کے لیے متعلقہ جماعت کا انتخاب کریں
         </p>
       </div>
@@ -109,18 +109,18 @@ export const ClassSelectionPortal: React.FC<ClassSelectionPortalProps> = ({
                   <div className="flex items-center gap-2.5">
                     <span className="text-2xl">{detail?.icon || '📖'}</span>
                     <div>
-                      <span className="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-slate-500">
                         {detail?.grade}
                       </span>
-                      <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-indigo-600 transition">
+                      <h2 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-indigo-600 transition">
                         {cls.nameEn}
-                      </h3>
+                      </h2>
                     </div>
                   </div>
 
                   {detail?.badge && (
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${detail.badgeColor}`}
+                      className={`text-xs font-bold px-2 py-0.5 rounded-full border shrink-0 ${detail.badgeColor}`}
                     >
                       {detail.badge}
                     </span>
@@ -128,7 +128,7 @@ export const ClassSelectionPortal: React.FC<ClassSelectionPortalProps> = ({
                 </div>
 
                 {/* Urdu title */}
-                <div className="text-xs font-semibold text-slate-500 font-nastaliq pt-0.5" dir="rtl">
+                <div className="text-xs font-semibold text-slate-500 font-nastaliq text-left pt-0.5" dir="ltr">
                   {cls.nameUr}
                 </div>
 
@@ -138,7 +138,7 @@ export const ClassSelectionPortal: React.FC<ClassSelectionPortalProps> = ({
                 </p>
 
                 {/* Subjects pill */}
-                <div className="text-[11px] text-slate-500 bg-slate-50 p-2 rounded-xl border border-slate-100 leading-tight">
+                <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded-xl border border-slate-100 leading-tight">
                   <strong className="text-slate-700">Subjects: </strong>
                   {detail?.subjects}
                 </div>
@@ -152,8 +152,8 @@ export const ClassSelectionPortal: React.FC<ClassSelectionPortalProps> = ({
                 </span>
 
                 {isCurrent && (
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                    <CheckCircle2 size={12} className="text-emerald-600" /> Currently Selected
+                  <span className="text-xs font-medium text-emerald-700 flex items-center gap-1">
+                    <CheckCircle2 size={13} className="text-emerald-600 shrink-0" /> Currently Selected
                   </span>
                 )}
               </div>

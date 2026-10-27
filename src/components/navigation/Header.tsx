@@ -92,51 +92,33 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Sub Bar: Simple Class Indicator & Dedication Ribbon */}
-        <div className="flex items-center justify-between gap-1.5 pt-1 border-t border-slate-100 overflow-hidden">
-          {/* Simple, Clean Class Badge with Switch Link */}
-          <div className="flex items-center gap-1.5 min-w-0">
-            <button
-              onClick={onOpenClassPicker}
-              className="flex items-center gap-1.5 px-2 py-1 sm:px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold cursor-pointer transition shadow-2xs max-w-[130px] sm:max-w-none"
-              title="Click to switch class"
-            >
-              <GraduationCap size={13} className="text-indigo-600 shrink-0" />
-              <span className="font-bold text-slate-900 truncate">{simpleClassName}</span>
-              <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">&bull; BISE Swat</span>
-            </button>
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 overflow-hidden">
+          {/* Unified Accessible Class Badge with Clear Affordance */}
+          <button
+            onClick={onOpenClassPicker}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-50/80 hover:bg-indigo-100/90 text-indigo-950 border border-indigo-200/80 text-xs font-semibold cursor-pointer transition shadow-2xs hover:shadow-xs group shrink-0"
+            title="Switch your class or board"
+            aria-label={`Current class: ${simpleClassName}. Click to switch class.`}
+          >
+            <GraduationCap size={14} className="text-indigo-600 shrink-0" />
+            <span className="font-bold text-slate-900">{simpleClassName}</span>
+            <span className="text-slate-400 font-normal hidden sm:inline">&bull; BISE Swat</span>
+            <span className="text-[11px] font-bold text-indigo-600 bg-white px-1.5 py-0.5 rounded border border-indigo-200 group-hover:border-indigo-300 ml-1">
+              Switch
+            </span>
+          </button>
 
-            {onOpenClassPicker && (
-              <button
-                onClick={onOpenClassPicker}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:underline cursor-pointer transition shrink-0"
-                title="Choose another class"
-              >
-                Change
-              </button>
-            )}
-          </div>
-
-          {/* Dedication Button */}
+          {/* Dedication Button (Subtle, Non-competing Styling) */}
           {onOpenDedication && (
             <button
               id="dedication-nav-btn"
-              onClick={() => {
-                onOpenDedication();
-              }}
-              className="group relative px-2 py-1 sm:px-2.5 rounded-lg text-amber-100 flex items-center gap-1 sm:gap-1.5 transition-all cursor-pointer shadow-xs hover:shadow-sm hover:scale-[1.01] active:scale-[0.98] border border-amber-500/70 shrink-0 min-w-0"
-              style={{
-                background: 'linear-gradient(135deg, #78350F 0%, #92400E 40%, #B45309 80%, #D97706 100%)',
-              }}
+              onClick={onOpenDedication}
+              className="px-2.5 py-1 rounded-lg text-xs font-medium text-amber-800 bg-amber-50/80 hover:bg-amber-100/90 border border-amber-200/70 flex items-center gap-1.5 transition cursor-pointer shrink-0 min-w-0"
               title="Dedicated to Baba Jan & Mor Jan"
+              aria-label="View dedication to Baba Jan and Mor Jan"
             >
-              <Heart size={11} className="fill-amber-300 text-amber-200 shrink-0 animate-pulse" />
-              <span
-                style={{
-                  fontFamily: '"Times New Roman", Times, Georgia, serif',
-                  letterSpacing: '0.015em',
-                }}
-                className="text-[10.5px] sm:text-xs font-bold text-amber-50 whitespace-nowrap"
-              >
+              <Heart size={12} className="fill-amber-400 text-amber-500 shrink-0" />
+              <span className="text-[11px] font-serif text-amber-900 truncate">
                 <span className="hidden sm:inline">Dedicated to Baba Jan &amp; Mor Jan</span>
                 <span className="sm:hidden">Baba Jan &amp; Mor Jan</span>
               </span>

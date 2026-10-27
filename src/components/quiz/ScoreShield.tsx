@@ -51,7 +51,7 @@ export const ScoreShield: React.FC<ScoreShieldProps> = ({ attempt, onRetry, onBa
 
       {/* Outcome Title */}
       <h2 className={`text-2xl font-black mb-1 ${attempt.passed ? 'text-emerald-900' : 'text-rose-900'}`}>
-        {attempt.passed ? 'EXAMINATION PASSED' : 'NEEDS REVISION'}
+        {attempt.passed ? 'Examination Passed' : 'Needs Revision'}
       </h2>
       <div className="text-base font-nastaliq font-bold mb-4" style={{ color: attempt.passed ? '#047857' : '#BE123C' }}>
         {attempt.passed ? 'کامیاب — مبارک ہو!' : 'دوبارہ محنت کی ضرورت ہے — گھبرائیں نہیں!'}
@@ -60,20 +60,20 @@ export const ScoreShield: React.FC<ScoreShieldProps> = ({ attempt, onRetry, onBa
       {/* Score and Grade Stats */}
       <div className="grid grid-cols-3 gap-2 bg-white/90 p-3 rounded-2xl border border-slate-200 mb-5">
         <div>
-          <div className="text-[11px] text-slate-400 font-bold uppercase">Score</div>
-          <div className="text-xl font-black text-slate-800">
+          <div className="text-xs text-slate-500 font-semibold">Score</div>
+          <div className="text-xl font-black text-slate-800 mt-0.5">
             {attempt.score}/{attempt.total}
           </div>
         </div>
         <div>
-          <div className="text-[11px] text-slate-400 font-bold uppercase">Percentage</div>
-          <div className={`text-xl font-black ${attempt.passed ? 'text-emerald-600' : 'text-rose-600'}`}>
+          <div className="text-xs text-slate-500 font-semibold">Percentage</div>
+          <div className={`text-xl font-black mt-0.5 ${attempt.passed ? 'text-emerald-600' : 'text-rose-600'}`}>
             {attempt.percentage}%
           </div>
         </div>
         <div>
-          <div className="text-[11px] text-slate-400 font-bold uppercase">BISE Grade</div>
-          <div className="text-xl font-black text-purple-600">
+          <div className="text-xs text-slate-500 font-semibold">BISE Grade</div>
+          <div className="text-xl font-black text-purple-600 mt-0.5">
             {attempt.grade}
           </div>
         </div>

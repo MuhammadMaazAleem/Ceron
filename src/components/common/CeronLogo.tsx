@@ -78,7 +78,7 @@ export const CeronLogo: React.FC<CeronLogoProps> = ({
               Academic
             </span>
           </div>
-          <span className="text-[10px] text-slate-400 font-medium tracking-tight leading-tight mt-0.5">
+          <span className="text-xs text-slate-500 font-medium tracking-tight leading-tight mt-0.5">
             BISE Swat &bull; Classes 9&ndash;12
           </span>
         </div>

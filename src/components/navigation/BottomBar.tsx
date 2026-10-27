@@ -18,19 +18,28 @@ export const BottomBar: React.FC<BottomBarProps> = ({
     onTabChange(id);
   };
 
+  const navItems = [
+    { id: 'home', label: 'Syllabus', icon: BookOpen },
+    { id: 'tutor', label: 'AI Tutor', icon: Sparkles },
+    { id: 'checker', label: 'Paper Checker', icon: ClipboardCheck },
+    { id: 'mock', label: '20-MCQ Exam', icon: FileText },
+  ];
+
   return (
     <nav
+      role="tablist"
+      aria-label="Main Navigation"
       style={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
         zIndex: 40,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(12px)',
+        backgroundColor: 'rgba(255, 255, 255, 0.96)',
+        backdropFilter: 'blur(16px)',
         borderTop: '1px solid #E2E8F0',
-        padding: '6px 12px 10px',
-        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.05)',
+        padding: '6px 12px calc(8px + env(safe-area-inset-bottom, 0px))',
+        boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.04)',
       }}
     >
       <div
@@ -40,102 +49,43 @@ export const BottomBar: React.FC<BottomBarProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
-          gap: '8px',
+          gap: '6px',
         }}
       >
-        {/* Tab 1: Syllabus */}
-        <button
-          onClick={() => handleTab('home')}
-          style={{
-            flex: 1,
-            padding: '6px 4px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '3px',
-            backgroundColor: activeTab === 'home' ? '#F1F5F9' : 'transparent',
-            color: activeTab === 'home' ? '#0F172A' : '#64748B',
-            fontWeight: activeTab === 'home' ? 800 : 500,
-            border: 'none',
-          }}
-        >
-          <BookOpen size={18} style={{ color: activeTab === 'home' ? '#0F172A' : '#94A3B8' }} />
-          <span style={{ fontSize: '11px', lineHeight: 1.2 }}>Syllabus</span>
-        </button>
+        {navItems.map((item) => {
+          const isActive = activeTab === item.id;
+          const Icon = item.icon;
 
-        {/* Tab 2: Ask AI Tutor */}
-        <button
-          onClick={() => handleTab('tutor')}
-          style={{
-            flex: 1,
-            padding: '6px 4px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '3px',
-            border: activeTab === 'tutor' ? 'none' : '1px solid #E9D5FF',
-            backgroundColor: activeTab === 'tutor' ? '#7C3AED' : '#F5F3FF',
-            color: activeTab === 'tutor' ? '#FFFFFF' : '#6D28D9',
-            fontWeight: 700,
-            boxShadow: activeTab === 'tutor' ? '0 2px 8px rgba(124, 58, 237, 0.25)' : 'none',
-          }}
-        >
-          <Sparkles size={17} style={{ color: activeTab === 'tutor' ? '#FFFFFF' : '#7C3AED' }} />
-          <span style={{ fontSize: '10.5px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>AI Tutor</span>
-        </button>
-
-        {/* Tab 3: AI Paper Checker (Examiner) */}
-        <button
-          onClick={() => handleTab('checker')}
-          style={{
-            flex: 1,
-            padding: '6px 4px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '3px',
-            border: activeTab === 'checker' ? 'none' : '1px solid #EADCCB',
-            backgroundColor: activeTab === 'checker' ? '#825E38' : '#FAF6EE',
-            color: activeTab === 'checker' ? '#FFFFFF' : '#825E38',
-            fontWeight: 700,
-            boxShadow: activeTab === 'checker' ? '0 2px 8px rgba(130, 94, 56, 0.25)' : 'none',
-          }}
-        >
-          <ClipboardCheck size={17} style={{ color: activeTab === 'checker' ? '#FFFFFF' : '#825E38' }} />
-          <span style={{ fontSize: '10.5px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>Paper Checker</span>
-        </button>
-
-        {/* Tab 4: Mock Exams */}
-        <button
-          onClick={() => handleTab('mock')}
-          style={{
-            flex: 1,
-            padding: '6px 4px',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '3px',
-            border: 'none',
-            backgroundColor: activeTab === 'mock' ? '#ECFDF5' : 'transparent',
-            color: activeTab === 'mock' ? '#047857' : '#64748B',
-            fontWeight: activeTab === 'mock' ? 700 : 500,
-          }}
-        >
-          <FileText size={17} style={{ color: activeTab === 'mock' ? '#059669' : '#94A3B8' }} />
-          <span style={{ fontSize: '10.5px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>20-MCQ Exam</span>
-        </button>
+          return (
+            <button
+              key={item.id}
+              role="tab"
+              aria-selected={isActive}
+              aria-label={item.label}
+              onClick={() => handleTab(item.id)}
+              style={{
+                flex: 1,
+                padding: '6px 4px',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '3px',
+                border: isActive ? '1px solid #C7D2FE' : '1px solid transparent',
+                backgroundColor: isActive ? '#EEF2FF' : 'transparent',
+                color: isActive ? '#3730A3' : '#64748B',
+                fontWeight: isActive ? 700 : 500,
+              }}
+            >
+              <Icon size={18} style={{ color: isActive ? '#4F46E5' : '#94A3B8' }} />
+              <span style={{ fontSize: '11px', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </nav>
   );

@@ -209,20 +209,19 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
               </span>
               <span
                 style={{
-                  fontSize: '10px',
+                  fontSize: '11px',
                   fontWeight: 700,
-                  padding: '2px 7px',
+                  padding: '2px 8px',
                   borderRadius: '12px',
                   backgroundColor: '#EFEAE1',
                   color: '#825E38',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.02em',
                 }}
               >
                 BISE Swat
               </span>
             </div>
-            <p className="text-[10px] text-stone-500 font-nastaliq -mt-0.5" dir="rtl">
+            <p className="text-xs text-stone-500 font-nastaliq mt-0.5" dir="rtl">
               ممتحن پیپر چیکر • خودکار مارکنگ
             </p>
           </div>
@@ -265,7 +264,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+              <span className="text-xs font-semibold text-amber-900">
                 Active Curriculum Chapter
               </span>
               <div className="flex items-center gap-2 mt-0.5">
@@ -274,7 +273,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                   {selectedUnit?.titleEn || 'Select Chapter'}
                 </h3>
               </div>
-              <p className="text-[11px] font-nastaliq text-stone-500" dir="rtl">
+              <p className="text-xs font-nastaliq text-stone-600 mt-0.5" dir="rtl">
                 {selectedUnit?.titleUr}
               </p>
             </div>
@@ -346,13 +345,13 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
               onClick={handleRefreshQuestions}
               disabled={isGeneratingQuestions}
               style={{
-                fontSize: '11px',
+                fontSize: '12px',
                 fontWeight: 600,
                 color: '#825E38',
                 backgroundColor: '#FFFFFF',
                 border: '1px solid #DCD7CE',
                 borderRadius: '8px',
-                padding: '5px 10px',
+                padding: '5px 12px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
@@ -436,18 +435,17 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                 <div className="flex items-center justify-between">
                   <span
                     style={{
-                      fontSize: '10px',
+                      fontSize: '12px',
                       fontWeight: 700,
-                      padding: '2px 8px',
-                      borderRadius: '6px',
+                      padding: '3px 10px',
+                      borderRadius: '8px',
                       backgroundColor: '#EFEAE1',
                       color: '#825E38',
-                      textTransform: 'uppercase',
                     }}
                   >
                     {currentQuestion.section}
                   </span>
-                  <span className="text-xs font-bold text-amber-900 bg-amber-100/70 border border-amber-200/60 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-amber-900 bg-amber-100/70 border border-amber-200/60 px-2.5 py-0.5 rounded-full">
                     {currentQuestion.marks} Marks
                   </span>
                 </div>
@@ -478,7 +476,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
 
                 {/* Board Tip / Rubric Hint */}
                 {currentQuestion.boardTip && (
-                  <div className="pt-2 flex items-start gap-2 text-[11px] text-amber-900 bg-amber-50/70 border border-amber-200/50 p-2.5 rounded-lg">
+                  <div className="pt-2 flex items-start gap-2 text-xs text-amber-950 bg-amber-50/70 border border-amber-200/50 p-2.5 rounded-lg">
                     <HelpCircle size={14} className="shrink-0 mt-0.5 text-amber-700" />
                     <span>
                       <strong>Marking Tip: </strong>
@@ -503,7 +501,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
           className="space-y-4"
         >
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+            <span className="text-xs font-semibold text-amber-900">
               Student Paper Submission
             </span>
             <h3
@@ -570,21 +568,21 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                       Paper Photo Attached
                     </span>
                   </div>
-                  <p className="text-[10.5px] text-stone-500 truncate mb-2">
+                  <p className="text-xs text-stone-500 truncate mb-2">
                     {imageFileName || 'handwritten_answer.jpg'}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => cameraInputRef.current?.click()}
-                      className="text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-md border border-amber-200/80 transition cursor-pointer"
+                      className="text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-md border border-amber-200/80 transition cursor-pointer"
                     >
                       📷 Retake
                     </button>
                     <button
                       type="button"
                       onClick={handleClearImage}
-                      className="text-[11px] font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded-md transition cursor-pointer"
+                      className="text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded-md transition cursor-pointer"
                     >
                       Remove
                     </button>
@@ -593,10 +591,10 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
               </div>
 
               <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] text-stone-500">
+                <span className="text-xs text-stone-500">
                   Ready to be checked by BISE Swat Examiner
                 </span>
-                <span className="text-[10px] font-semibold text-emerald-700">
+                <span className="text-xs font-semibold text-emerald-700">
                   ✓ Ready for Grading
                 </span>
               </div>
@@ -631,7 +629,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                   <strong className="text-xs text-stone-800 block">
                     Take Photo with Camera
                   </strong>
-                  <span className="text-[10px] text-stone-500 block mt-0.5">
+                  <span className="text-xs text-stone-500 block mt-0.5">
                     Directly snap paper from mobile
                   </span>
                 </div>
@@ -665,7 +663,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                   <strong className="text-xs text-stone-800 block">
                     Upload from Gallery / Files
                   </strong>
-                  <span className="text-[10px] text-stone-500 block mt-0.5">
+                  <span className="text-xs text-stone-500 block mt-0.5">
                     Select JPG, PNG, or photo
                   </span>
                 </div>
@@ -765,7 +763,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
               className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                <span className="text-xs font-semibold text-amber-900">
                   Official BISE Swat Examiner Result
                 </span>
                 <h3
@@ -795,7 +793,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                   minWidth: '100px',
                 }}
               >
-                <span className="text-[10px] uppercase font-bold text-stone-500 block">
+                <span className="text-xs font-semibold text-stone-500 block">
                   Grade Awarded
                 </span>
                 <span
@@ -821,7 +819,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                     ? 'C'
                     : 'F'}
                 </span>
-                <span className="text-[10px] font-bold text-stone-600 block">
+                <span className="text-xs font-bold text-stone-600 block">
                   {evaluationResult.gradePercentage}%
                 </span>
               </div>
@@ -843,7 +841,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                       <div className="flex-1 pr-3">
                         <strong className="text-stone-800">{item.criteria}</strong>
                         {item.note && (
-                          <p className="text-[11px] text-stone-500 mt-0.5">{item.note}</p>
+                          <p className="text-xs text-stone-500 mt-0.5">{item.note}</p>
                         )}
                       </div>
                       <div className="shrink-0 font-bold text-stone-800 text-xs bg-white px-2.5 py-1 rounded-md border border-stone-200">
@@ -868,15 +866,15 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                   }}
                   className="space-y-1.5"
                 >
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-red-800 flex items-center gap-1">
-                    <AlertTriangle size={12} />
+                  <span className="text-xs font-semibold text-red-800 flex items-center gap-1">
+                    <AlertTriangle size={13} />
                     <span>Missing Scientific Key Terms (چھوٹی ہوئی اصطلاحات)</span>
                   </span>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {evaluationResult.missingKeyTerms.map((term, i) => (
                       <span
                         key={i}
-                        className="text-[11px] bg-white border border-red-300 text-red-900 px-2 py-0.5 rounded-md font-semibold"
+                        className="text-xs bg-white border border-red-300 text-red-900 px-2 py-0.5 rounded-md font-semibold"
                       >
                         {term}
                       </span>
@@ -896,8 +894,8 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                   }}
                   className="space-y-1"
                 >
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1">
-                    <HelpCircle size={12} />
+                  <span className="text-xs font-semibold text-amber-900 flex items-center gap-1">
+                    <HelpCircle size={13} />
                     <span>BISE Swat Examiner Tip (ممتحن کا مشورہ)</span>
                   </span>
                   <p className="text-xs text-amber-900 leading-relaxed">
@@ -924,7 +922,7 @@ export const AIPaperCheckerView: React.FC<AIPaperCheckerViewProps> = ({
                     Official 100% Board Model Solution (سرکاری ماڈل حل)
                   </span>
                 </div>
-                <span className="text-[10px] font-bold text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-amber-900 bg-amber-100/70 px-2.5 py-0.5 rounded-full">
                   Textbook Standard
                 </span>
               </div>

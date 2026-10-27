@@ -301,14 +301,14 @@ export const CeronAIClaudeView: React.FC<CeronAIClaudeViewProps> = ({
                         marginBottom: '12px',
                       }}
                     >
-                      <span style={{ fontSize: '11px', fontWeight: 600, color: '#825E38', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#825E38' }}>
                         Model Answer
                       </span>
                       {msg.response && (
                         <button
                           onClick={() => handleCopy(msg)}
                           style={{
-                            fontSize: '11px',
+                            fontSize: '12px',
                             fontWeight: 500,
                             color: '#756F68',
                             display: 'flex',
@@ -321,12 +321,12 @@ export const CeronAIClaudeView: React.FC<CeronAIClaudeViewProps> = ({
                         >
                           {copiedId === msg.id ? (
                             <>
-                              <CheckCircle2 size={12} style={{ color: '#16A34A' }} />
+                              <CheckCircle2 size={13} style={{ color: '#16A34A' }} />
                               <span style={{ color: '#16A34A', fontWeight: 600 }}>Copied</span>
                             </>
                           ) : (
                             <>
-                              <Copy size={12} />
+                              <Copy size={13} />
                               <span>Copy</span>
                             </>
                           )}
@@ -376,18 +376,18 @@ export const CeronAIClaudeView: React.FC<CeronAIClaudeViewProps> = ({
                             >
                               <span
                                 style={{
-                                  width: '18px',
-                                  height: '18px',
+                                  width: '22px',
+                                  height: '22px',
                                   borderRadius: '50%',
                                   backgroundColor: '#EFEAE1',
                                   color: '#5A544D',
                                   fontWeight: 700,
-                                  fontSize: '10px',
+                                  fontSize: '12px',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   flexShrink: 0,
-                                  marginTop: '2px',
+                                  marginTop: '1px',
                                 }}
                               >
                                 {idx + 1}
@@ -541,7 +541,7 @@ export const CeronAIClaudeView: React.FC<CeronAIClaudeViewProps> = ({
                 border: 'none',
                 outline: 'none',
                 background: 'transparent',
-                fontSize: '13px',
+                fontSize: '15px',
                 color: '#1E1B18',
                 lineHeight: 1.5,
               }}

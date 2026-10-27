@@ -9,13 +9,10 @@ import {
   BookOpen,
   ArrowRight,
   Calculator,
-  Target,
-  Sparkles,
+  LayoutGrid,
+  List,
   Tv,
-  ExternalLink,
-  HelpCircle,
   X,
-  CheckCircle2,
 } from 'lucide-react';
 
 interface AcademyDashboardProps {
@@ -32,12 +29,13 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
   profile,
   subjects,
   units,
-  languagePref,
+  languagePref: _languagePref,
   onSelectUnit,
   onLaunchMockTest,
   onOpenTour,
 }) => {
   const [showGuide, setShowGuide] = useState<boolean>(true);
+  const [isCompactView, setIsCompactView] = useState<boolean>(false);
 
   // Auto-dismiss 10-second welcome popup
   useEffect(() => {
@@ -68,35 +66,36 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
     : units.filter((u) => u.subjectId === selectedSubjectId);
 
   return (
-    <div className="space-y-5 pb-24 max-w-2xl mx-auto px-1 sm:px-0">
+    <div className="space-y-5 pb-32 max-w-2xl mx-auto px-2 sm:px-0">
       {/* ── 1. Sleek 10-Second Welcome Popup Banner ── */}
       {showGuide && (
         <div className="bg-indigo-50/90 border border-indigo-200 rounded-xl p-3 px-4 shadow-xs flex items-center justify-between gap-3 text-xs text-indigo-950 animate-fadeIn transition-all">
           <div className="flex items-center gap-2.5 min-w-0">
-            <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0">
+            <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
               i
             </span>
-            <p className="text-[11px] sm:text-xs font-medium text-slate-700">
+            <p className="text-xs font-medium text-slate-700">
               Select your subject below to explore chapters, or use <strong>Ask AI Tutor</strong> for instant board solutions.
             </p>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             {onOpenTour && (
               <button
                 onClick={() => {
                   soundEngine.playPop();
                   onOpenTour();
                 }}
-                className="px-2 py-0.5 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold transition cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition cursor-pointer"
               >
                 Tour
               </button>
             )}
             <button
               onClick={() => setShowGuide(false)}
-              className="p-1 text-slate-400 hover:text-slate-700 rounded-md transition cursor-pointer"
+              className="p-1 text-slate-400 hover:text-slate-700 rounded-lg transition cursor-pointer"
               title="Dismiss"
+              aria-label="Dismiss guide"
             >
               <X size={14} />
             </button>
@@ -104,7 +103,43 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
         </div>
       )}
 
-      {/* ── 2. Board Exam Overview & Quick Action Hero ── */}
+      {/* ── 2. Prescribed Subjects (Context Established Before Actions) ── */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-1.5">
+            <BookOpen size={15} className="text-indigo-600" />
+            <span>Prescribed Subjects</span>
+          </h2>
+          <span className="text-xs font-semibold text-slate-500">
+            {activeSubjectList.length} Subjects
+          </span>
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-none snap-x px-1">
+          {activeSubjectList.map((sub) => {
+            const isSelected = sub.id === selectedSubjectId;
+            return (
+              <button
+                key={sub.id}
+                onClick={() => {
+                  soundEngine.playPop();
+                  setSelectedSubjectId(sub.id);
+                }}
+                className={`shrink-0 px-4 py-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2 snap-start ${
+                  isSelected
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm font-bold scale-[1.02]'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50 font-semibold'
+                }`}
+              >
+                <span className="text-lg">{sub.icon}</span>
+                <span className="text-xs sm:text-sm whitespace-nowrap">{sub.nameEn}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── 3. Board Exam Overview & Quick Action Hero ── */}
       <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1.5 max-w-full truncate">
@@ -119,11 +154,11 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
         </div>
 
         <div>
-          <h2 className="text-lg sm:text-2xl font-black text-slate-900 leading-snug">
+          <h1 className="text-lg sm:text-2xl font-black text-slate-900 leading-snug">
             Board Examination Curriculum &amp; Solved Exercises
-          </h2>
+          </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
-            Complete syllabus coverage with step-by-step solved numericals, 4-mark conceptual answers, video masterclasses, and board exam mock tests.
+            Complete {selectedSubject?.nameEn || ''} syllabus coverage with step-by-step solved numericals, 4-mark conceptual answers, video masterclasses, and board exam mock tests.
           </p>
         </div>
 
@@ -153,52 +188,31 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
         </div>
       </div>
 
-      {/* ── 3. Prescribed Subjects (Thumb-Friendly Horizontal Scroll) ── */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-            <BookOpen size={14} className="text-indigo-600" /> Prescribed Subjects
-          </h3>
-          <span className="text-xs font-semibold text-slate-400">
-            {activeSubjectList.length} Subjects
-          </span>
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-none snap-x -mx-1 px-1">
-          {activeSubjectList.map((sub) => {
-            const isSelected = sub.id === selectedSubjectId;
-            return (
-              <button
-                key={sub.id}
-                onClick={() => {
-                  soundEngine.playPop();
-                  setSelectedSubjectId(sub.id);
-                }}
-                className={`shrink-0 px-4 py-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2 snap-start ${isSelected
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm font-bold scale-[1.02]'
-                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50 font-semibold'
-                  }`}
-              >
-                <span className="text-lg">{sub.icon}</span>
-                <span className="text-xs sm:text-sm whitespace-nowrap">{sub.nameEn}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* ── 4. Subject Chapters (Spacious, Clear & Easy to Read) ── */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <div>
-            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <span>{selectedSubject?.icon}</span>
               <span>{selectedSubject?.nameEn} Chapters</span>
-            </h4>
+            </h2>
           </div>
-          <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full">
-            {displayedUnits.length} {displayedUnits.length === 1 ? 'Chapter' : 'Chapters'}
-          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsCompactView(!isCompactView)}
+              className="px-2.5 py-1 rounded-lg border border-slate-200 hover:border-slate-300 bg-white text-slate-600 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
+              title={isCompactView ? 'Switch to Detailed View' : 'Switch to Compact View'}
+              aria-label={isCompactView ? 'Switch to Detailed View' : 'Switch to Compact View'}
+            >
+              {isCompactView ? <LayoutGrid size={13} /> : <List size={13} />}
+              <span>{isCompactView ? 'Detailed' : 'Compact'}</span>
+            </button>
+
+            <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/60">
+              {displayedUnits.length} {displayedUnits.length === 1 ? 'Chapter' : 'Chapters'}
+            </span>
+          </div>
         </div>
 
         {displayedUnits.length === 0 ? (
@@ -218,14 +232,57 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
                 // Resolve primary teacher and chapter playlist
                 const teachers = VideoLectureService.getTeachers(profile.classId, unit.subjectId);
                 const primaryTeacher = teachers[0];
-                const videoInfo = VideoLectureService.getChapterVideoInfo({
-                  classId: profile.classId,
-                  subjectId: unit.subjectId,
-                  subjectName: selectedSubject?.nameEn || 'Physics',
-                  chapterNumber: unit.kptbbChapter || unit.unitNumber,
-                  chapterTitle: unit.titleEn,
-                  teacher: primaryTeacher,
-                });
+
+                // Clean redundant prefixes like "Chapter 3: Support and Movements (8% Board Weightage)"
+                const cleanTitle = unit.titleEn
+                  .replace(/^(Chapter|Unit)\s*\d+:\s*/i, '')
+                  .replace(/\s*\(\d+%\s*Board\s*Weightage\)/i, '')
+                  .trim();
+
+                const weightageMatch = unit.titleEn.match(/(\d+%\s*Board\s*Weightage)/i);
+                const weightageText = weightageMatch ? weightageMatch[1] : null;
+
+                if (isCompactView) {
+                  return (
+                    <div
+                      key={unit.id}
+                      onClick={() => {
+                        soundEngine.playPop();
+                        onSelectUnit(unit);
+                      }}
+                      className="bg-white border border-slate-200/90 rounded-xl p-3.5 px-4 cursor-pointer hover:border-indigo-400 hover:shadow-xs transition-all flex items-center justify-between gap-3 shadow-2xs group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-xs font-bold px-2 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 shrink-0">
+                          Ch {unit.kptbbChapter}
+                        </span>
+                        <div className="min-w-0">
+                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition truncate">
+                            {cleanTitle}
+                          </h3>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+                            <span>{topicCount} Topics</span>
+                            <span>&bull;</span>
+                            <span>{solvedCount} Solved</span>
+                            {weightageText && (
+                              <>
+                                <span>&bull;</span>
+                                <span className="text-purple-600 font-semibold">{weightageText}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs font-bold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+                          ~{pairingMarks}M
+                        </span>
+                        <ArrowRight size={14} className="text-indigo-600 group-hover:translate-x-0.5 transition" />
+                      </div>
+                    </div>
+                  );
+                }
 
                 return (
                   <div
@@ -236,26 +293,33 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
                     }}
                     className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 cursor-pointer hover:border-indigo-400 hover:shadow-md transition-all group space-y-3 shadow-xs"
                   >
-                    {/* Header Row: Chapter Number & Marks */}
-                    <div className="flex items-center justify-between gap-2">
+                    {/* Unified Header Row: Chapter Badge + Anchored Unit Badge + Weightage & Marks */}
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100">
                           Chapter {unit.kptbbChapter}
                         </span>
-                        <span className="text-xs font-medium text-slate-500">
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/60">
                           Unit {unit.unitNumber}
                         </span>
                       </div>
 
-                      <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
-                        ~{pairingMarks} Marks
-                      </span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {weightageText && (
+                          <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200/70">
+                            {weightageText}
+                          </span>
+                        )}
+                        <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                          ~{pairingMarks} Marks
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Chapter Title (Large, Legible Typography) */}
+                    {/* Chapter Title (Cleaned of Redundant "Chapter X:" Prefix) */}
                     <div>
                       <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug">
-                        {unit.titleEn}
+                        {cleanTitle}
                       </h3>
                       {unit.overviewEn && (
                         <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
@@ -296,3 +360,4 @@ export const AcademyDashboard: React.FC<AcademyDashboardProps> = ({
     </div>
   );
 };
+export default AcademyDashboard;

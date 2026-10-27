@@ -11,7 +11,8 @@ export type RouteType =
   | 'quiz'
   | 'tutor'
   | 'checker'
-  | 'badges';
+  | 'badges'
+  | 'mock';
 
 export interface AppRoute {
   type: RouteType;
@@ -49,6 +50,8 @@ export class NavigationRouter {
         return { type: 'checker', unitId: p1 };
       case 'badges':
         return { type: 'badges' };
+      case 'mock':
+        return { type: 'mock' };
       case 'portal':
         return { type: 'portal' };
       default:
@@ -74,6 +77,8 @@ export class NavigationRouter {
         return route.unitId ? `#/checker/${route.unitId}` : '#/checker';
       case 'badges':
         return '#/badges';
+      case 'mock':
+        return '#/mock';
       default:
         return '#/dashboard';
     }

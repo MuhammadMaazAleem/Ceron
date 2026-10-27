@@ -167,19 +167,12 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
       {/* ── TOP BANNER: EXAM INFO & ACTIONS ────────────────────────── */}
       <div className="pearl-card p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white border border-slate-200 shadow-sm">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <button
-            onClick={handleQuit}
-            className="p-2 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-slate-700 border border-slate-200 transition cursor-pointer shrink-0"
-            title="Quit quiz and go back"
-          >
-            <ChevronLeft size={16} />
-          </button>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 border border-purple-200">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 border border-purple-200">
                 ✨ AI Board Exam • {quiz.questions.length} MCQs (Simple to Hard)
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
                 BISE Swat Passing: 33%
               </span>
             </div>
@@ -274,35 +267,35 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="font-bold text-[11px] shrink-0 text-slate-700">{progressPercent}%</span>
+          <span className="font-bold text-xs shrink-0 text-slate-700">{progressPercent}%</span>
         </div>
       </div>
 
       {/* ── 50 QUESTIONS FAST SCROLL BAR ───────────────────────────── */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-[11px] px-1 text-slate-500">
+        <div className="flex items-center justify-between text-xs px-1 text-slate-600">
           <span>Jump to Question:</span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setFilterMode('all')}
-              className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                filterMode === 'all' ? 'bg-purple-600 text-white font-bold' : 'hover:bg-slate-200'
+              className={`px-2 py-0.5 rounded text-xs cursor-pointer ${
+                filterMode === 'all' ? 'bg-purple-600 text-white font-bold' : 'hover:bg-slate-200 text-slate-600'
               }`}
             >
               All ({quiz.questions.length})
             </button>
             <button
               onClick={() => setFilterMode('unanswered')}
-              className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                filterMode === 'unanswered' ? 'bg-purple-600 text-white font-bold' : 'hover:bg-slate-200'
+              className={`px-2 py-0.5 rounded text-xs cursor-pointer ${
+                filterMode === 'unanswered' ? 'bg-purple-600 text-white font-bold' : 'hover:bg-slate-200 text-slate-600'
               }`}
             >
               Unanswered ({unansweredCount})
             </button>
             <button
               onClick={() => setFilterMode('flagged')}
-              className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                filterMode === 'flagged' ? 'bg-purple-600 text-white font-bold' : 'hover:bg-slate-200'
+              className={`px-2 py-0.5 rounded text-xs cursor-pointer ${
+                filterMode === 'flagged' ? 'bg-purple-600 text-white font-bold' : 'hover:bg-slate-200 text-slate-600'
               }`}
             >
               Flagged ({flagged.length})
@@ -349,7 +342,7 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
             <h4 className="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
               <LayoutGrid size={14} /> 50 Questions Navigator
             </h4>
-            <div className="flex items-center gap-2 text-[10px]">
+            <div className="flex items-center gap-2 text-xs">
               <span className="flex items-center gap-1 text-emerald-400">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Answered
               </span>

@@ -85,6 +85,15 @@ export const App: React.FC = () => {
         return;
       }
 
+      if (route.type === 'mock') {
+        setActiveTab('mock');
+        setActiveView('dashboard');
+        setActiveUnit(null);
+        setActiveLesson(null);
+        setActiveQuiz(null);
+        return;
+      }
+
       if (route.type === 'chapter' && route.unitId) {
         const foundUnit = units.find((u) => u.id === route.unitId);
         if (foundUnit) {
@@ -332,7 +341,7 @@ export const App: React.FC = () => {
         ) : activeTab === 'mock' ? (
           <div className="max-w-3xl mx-auto py-4 sm:py-6 px-1 sm:px-4">
             <div className="pearl-card p-4 sm:p-6 text-center bg-white border border-slate-200 shadow-md rounded-2xl mb-6 overflow-hidden">
-              <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-purple-100 text-purple-700 border border-purple-200 inline-block mb-2">
+              <span className="text-xs font-semibold px-3.5 py-1 rounded-full bg-purple-100 text-purple-700 border border-purple-200 inline-block mb-2">
                 ✨ Official BISE Swat 20 MCQs Examination (Simple to Hard)
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
@@ -352,22 +361,22 @@ export const App: React.FC = () => {
                       className="w-full p-3 sm:p-3.5 rounded-xl border border-slate-200 hover:border-purple-400 hover:bg-purple-50/50 transition cursor-pointer flex items-center justify-between group shadow-xs hover:shadow-sm overflow-hidden box-border"
                     >
                       <div className="flex-1 min-w-0 pr-2 overflow-hidden text-left">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <span className="text-[10px] font-bold uppercase px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">
                             {sub?.nameEn || 'STEM'}
                           </span>
-                          <span className="text-[10px] font-bold text-purple-600 uppercase">
+                          <span className="text-xs font-semibold text-purple-700">
                             Unit {u.unitNumber}
                           </span>
                         </div>
-                        <h4 className="text-xs font-bold text-slate-800 truncate block group-hover:text-purple-900">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate block group-hover:text-purple-900">
                           {u.titleEn}
                         </h4>
-                        <p className="text-[10px] font-nastaliq text-slate-500 truncate block" dir="rtl">
+                        <p className="text-xs font-nastaliq text-slate-600 truncate block mt-0.5" dir="rtl">
                           {u.titleUr}
                         </p>
                       </div>
-                      <span className="text-[10.5px] sm:text-xs font-bold text-purple-700 shrink-0 bg-purple-100 group-hover:bg-purple-200 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg border border-purple-200 whitespace-nowrap ml-1">
+                      <span className="text-xs font-semibold text-purple-700 shrink-0 bg-purple-100 group-hover:bg-purple-200 px-2.5 py-1 rounded-lg border border-purple-200 whitespace-nowrap ml-1">
                         20 MCQs
                       </span>
                     </button>
@@ -390,21 +399,30 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Adaptive Bottom Navigation Bar - Hidden when in AI Tutor or Paper Checker or Class Picker */}
-      {activeView === 'dashboard' && activeTab !== 'tutor' && activeTab !== 'checker' && !isSelectingClass && (
+      {/* Adaptive Bottom Navigation Bar - Visible across Dashboard and Quizzes */}
+      {(activeView === 'dashboard' || activeView === 'quiz') && activeTab !== 'tutor' && activeTab !== 'checker' && !isSelectingClass && (
         <BottomBar
           ageBand={activeProfile.ageBand}
-          activeTab={activeTab}
+          activeTab={activeTab === 'mock' || activeView === 'quiz' ? 'mock' : activeTab}
           onTabChange={(tab) => {
             if (tab === 'mock') {
               setActiveTab('mock');
+              setActiveView('dashboard');
+              setActiveQuiz(null);
+              NavigationRouter.push({ type: 'mock' });
               window.scrollTo({ top: 0, behavior: 'smooth' });
             } else if (tab === 'tutor') {
               NavigationRouter.push({ type: 'tutor' });
             } else if (tab === 'checker') {
               NavigationRouter.push({ type: 'checker', unitId: activeUnit?.id });
             } else if (tab === 'home') {
+              setActiveTab('home');
+              setActiveView('dashboard');
+              setActiveUnit(null);
+              setActiveLesson(null);
+              setActiveQuiz(null);
               NavigationRouter.push({ type: 'dashboard', classId: activeProfile.classId });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
               setActiveTab(tab);
             }
@@ -413,24 +431,28 @@ export const App: React.FC = () => {
       )}
 
       {/* ── Dedication to Baba Jan & Mor Jan Modal (Opened via Nav Bar) ── */}
-      <DedicationSplashModal
-        isOpen={isDedicationOpen}
-        onClose={() => setIsDedicationOpen(false)}
-      />
+      {isDedicationOpen && (
+        <DedicationSplashModal
+          isOpen={isDedicationOpen}
+          onClose={() => setIsDedicationOpen(false)}
+        />
+      )}
 
       {/* ── App Tour & Video Walkthrough Modal ── */}
-      <AppTourVideoModal
-        isOpen={isTourOpen}
-        onClose={() => setIsTourOpen(false)}
-        onStartExam={() => {
-          setIsTourOpen(false);
-          setActiveTab('mock');
-        }}
-        onOpenAITutor={() => {
-          setIsTourOpen(false);
-          setActiveTab('tutor');
-        }}
-      />
+      {isTourOpen && (
+        <AppTourVideoModal
+          isOpen={isTourOpen}
+          onClose={() => setIsTourOpen(false)}
+          onStartExam={() => {
+            setIsTourOpen(false);
+            setActiveTab('mock');
+          }}
+          onOpenAITutor={() => {
+            setIsTourOpen(false);
+            setActiveTab('tutor');
+          }}
+        />
+      )}
     </div>
   );
 };

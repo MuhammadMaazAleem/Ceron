@@ -142,7 +142,7 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
             <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-tight">
               Ceron AI Academic Assistant
             </h3>
-            <p className="text-[11px] text-slate-500 font-medium">
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
               Ask anything about your syllabus, numericals &amp; board questions
             </p>
           </div>
@@ -219,8 +219,8 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
       {/* Quick Tap Suggested Prompts */}
       {!response && !isLoading && (
         <div className="space-y-1.5">
-          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-            <Lightbulb size={12} className="text-amber-500" />
+          <div className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+            <Lightbulb size={13} className="text-amber-500" />
             <span>Popular Student Questions for {activeSubject?.nameEn}:</span>
           </div>
 
@@ -299,7 +299,7 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
 
           {/* Question Title */}
           <div className="bg-white border border-purple-100 rounded-xl p-3 shadow-2xs">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 block mb-0.5">
+            <span className="text-xs font-semibold text-purple-700 block mb-0.5">
               Topic Question:
             </span>
             <div className="text-sm font-extrabold text-slate-900 leading-snug">
@@ -310,8 +310,8 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
           {/* Section 1: Given Data & Governing Formula (for numericals/physics/chemistry) */}
           {((response.givenData && response.givenData.length > 0) || response.formula) && (
             <div className="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3.5 space-y-2.5">
-              <span className="text-[11px] font-bold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
-                <Calculator size={13} className="text-indigo-600" />
+              <span className="text-xs font-semibold text-indigo-900 flex items-center gap-1.5">
+                <Calculator size={14} className="text-indigo-600" />
                 <span>1. Governing Formula &amp; Given Data (With SI Units)</span>
               </span>
 
@@ -339,8 +339,8 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
 
           {/* Section 2: Key 4-Mark Structured Answer Points */}
           <div className="space-y-2">
-            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5 px-0.5">
-              <CheckCircle2 size={13} className="text-purple-600" />
+            <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5 px-0.5">
+              <CheckCircle2 size={14} className="text-purple-600" />
               <span>2. Step-by-Step Points for Board Exam (1 Mark per Point)</span>
             </span>
 
@@ -350,7 +350,7 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
                   key={idx}
                   className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs text-xs sm:text-sm text-slate-800 leading-relaxed font-normal flex items-start gap-2.5"
                 >
-                  <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-700 font-black text-[11px] flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                     {idx + 1}
                   </span>
                   <div className="flex-1">{step}</div>
@@ -364,7 +364,7 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
             <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-3.5 text-xs sm:text-sm text-emerald-950 font-medium flex items-start gap-2.5">
               <CheckCircle2 size={17} className="text-emerald-600 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 block">
+                <span className="text-xs font-semibold text-emerald-800 block">
                   3. Final Conclusion &amp; Result
                 </span>
                 <p className="font-bold text-emerald-900">{response.finalAnswerEn}</p>
@@ -375,7 +375,7 @@ export const SubjectAIPanel: React.FC<SubjectAIPanelProps> = ({
           {/* Section 4: Urdu Translation / خلاصہ (Bilingual Support for KPK Students) */}
           {response.finalAnswerUr && (
             <div className="bg-slate-100/80 border border-slate-200 rounded-xl p-3.5 text-right font-nastaliq" dir="rtl">
-              <span className="text-[11px] font-sans font-bold text-slate-500 uppercase tracking-wider block mb-1">
+              <span className="text-xs font-sans font-semibold text-slate-600 block mb-1">
                 خلاصہ (اردو ترجمہ):
               </span>
               <p className="text-sm leading-loose text-slate-800 font-bold">
