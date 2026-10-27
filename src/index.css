@@ -17,11 +17,19 @@ input, textarea {
   font-family: inherit;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   margin: 0;
   padding: 0;
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+.scroll-smooth {
+  scroll-behavior: smooth !important;
 }
 
 /* Ensure text never overflows or spills outside container borders */
@@ -43,7 +51,10 @@ p, span, h1, h2, h3, h4, h5, h6, a, button, label, li, td, th {
   border: none;
 }
 
-/* Layout & Flexbox */
+/* Layout & Display */
+.block { display: block !important; }
+.inline-block { display: inline-block !important; }
+.inline { display: inline !important; }
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
 .flex-wrap { flex-wrap: wrap; }
@@ -367,6 +378,14 @@ p, span, h1, h2, h3, h4, h5, h6, a, button, label, li, td, th {
 .bg-amber-50 { background-color: #FFFBEB; }
 .bg-amber-100 { background-color: #FEF3C7; }
 .bg-amber-500 { background-color: #F59E0B; }
+.bg-amber-600 { background-color: #D97706 !important; }
+.bg-amber-700 { background-color: #B45309 !important; }
+.bg-amber-800 { background-color: #92400E !important; }
+.bg-amber-900 { background-color: #78350F !important; }
+.border-amber-600 { border-color: #D97706 !important; }
+.border-amber-700 { border-color: #B45309 !important; }
+.border-amber-800 { border-color: #92400E !important; }
+.border-amber-900 { border-color: #78350F !important; }
 .bg-emerald-50 { background-color: #ECFDF5; }
 .bg-emerald-100 { background-color: #D1FAE5; }
 .bg-emerald-500 { background-color: #10B981; }
@@ -742,6 +761,36 @@ p, span, h1, h2, h3, h4, h5, h6, a, button, label, li, td, th {
 
 .animate-fadeIn {
   animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUpFade {
+  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes smoothExpand {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-smoothExpand {
+  animation: smoothExpand 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-goldPulse {

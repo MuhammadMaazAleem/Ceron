@@ -1,7 +1,14 @@
 import { env } from '../config/env';
 import { Unit, SolvedExerciseItem, PastPaperQuestion } from '../types';
 
+/**
+ * In production (Vercel), all AI calls go through /api/ai (server-side edge function)
+ * so the API key is never exposed in the browser bundle.
+ * In local development, we fall back to calling Groq directly using the .env key.
+ */
+const IS_PROD = import.meta.env.PROD;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const PROXY_URL = '/api/ai';
 
 // Candidate models in order of priority (with automatic failover)
 const CANDIDATE_MODELS = [
@@ -172,6 +179,28 @@ export class CeronAIService {
   }
 
   /**
+   * Returns the URL to use for AI requests.
+   * In production: /api/ai (Vercel Edge Function — key never in browser bundle).
+   * In development: direct Groq call using local .env key.
+   */
+  private static getEndpoint(): string {
+    return IS_PROD ? PROXY_URL : GROQ_API_URL;
+  }
+
+  /**
+   * Builds headers for the AI request.
+   * In production: no Authorization header (proxy handles it server-side).
+   * In development: includes key from .env.
+   */
+  private static getHeaders(): Record<string, string> {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (!IS_PROD) {
+      headers['Authorization'] = `Bearer ${this.getApiKey()}`;
+    }
+    return headers;
+  }
+
+  /**
    * Resilient fetch wrapper with AbortController timeout protection.
    * Ensures API requests never hang indefinitely on unstable/slow networks.
    */
@@ -190,6 +219,8 @@ export class CeronAIService {
   }
 
   static isConfigured(): boolean {
+    // In production, always configured (proxy handles auth server-side)
+    if (IS_PROD) return true;
     const key = this.getApiKey();
     return (
       key.length > 20 &&
@@ -219,12 +250,9 @@ export class CeronAIService {
     // Loop through available models in case one fails or has a temporary limit
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await this.fetchWithTimeout(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(this.getEndpoint(), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${key}`,
-          },
+          headers: this.getHeaders(),
           body: JSON.stringify({
             model,
             messages: [
@@ -406,12 +434,9 @@ Ensure the tone is crystal clear and simple for beginners, with real-world analo
     let lastError = '';
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await this.fetchWithTimeout(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(this.getEndpoint(), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${key}`,
-          },
+          headers: this.getHeaders(),
           body: JSON.stringify({
             model,
             messages: [
@@ -541,12 +566,9 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
           requestBody.response_format = { type: 'json_object' };
         }
 
-        const res = await this.fetchWithTimeout(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(this.getEndpoint(), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${key}`,
-          },
+          headers: this.getHeaders(),
           body: JSON.stringify(requestBody),
         });
 
@@ -708,12 +730,9 @@ You MUST respond in this EXACT valid JSON format ONLY:
 
       for (const model of CANDIDATE_MODELS) {
         try {
-          const res = await fetch(GROQ_API_URL, {
+          const res = await this.fetchWithTimeout(this.getEndpoint(), {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${key}`,
-            },
+            headers: this.getHeaders(),
             body: JSON.stringify({
               model,
               messages: [
@@ -846,12 +865,9 @@ ${isBiology
     let lastError = '';
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await this.fetchWithTimeout(GROQ_API_URL, {
+        const res = await this.fetchWithTimeout(this.getEndpoint(), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${key}`,
-          },
+          headers: this.getHeaders(),
           body: JSON.stringify({
             model,
             messages: [

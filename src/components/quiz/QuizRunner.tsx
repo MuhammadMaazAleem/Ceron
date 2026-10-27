@@ -61,6 +61,15 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
     soundEngine.playPop();
   };
 
+  const handleClearAnswer = (qId: string) => {
+    setAnswers((prev) => {
+      const copy = { ...prev };
+      delete copy[qId];
+      return copy;
+    });
+    soundEngine.playPop();
+  };
+
   const toggleFlag = (qId: string) => {
     setFlagged((prev) =>
       prev.includes(qId) ? prev.filter((id) => id !== qId) : [...prev, qId]
@@ -143,7 +152,7 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
   });
 
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 space-y-4">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 pt-4 pb-28 sm:pb-36 space-y-4">
       {/* ── TOP NAV BAR: BACK & QUIT QUIZ ──────────────────────────── */}
       <div className="flex items-center justify-between gap-2">
         <button
@@ -461,60 +470,111 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
         </div>
       </div>
 
-      {/* ── BOTTOM NAVIGATION: PREVIOUS, QUIT, NEXT, SUBMIT ──────────── */}
-      <div className="flex items-center justify-between gap-2 pt-2">
-        <div className="flex items-center gap-2">
+      {/* ── STICKY ELEVATED BOTTOM NAVIGATION BAR (ALWAYS VISIBLE & FITTED) ── */}
+      <div
+        style={{
+          border: '1.5px solid #CBD5E1',
+          borderRadius: '16px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+        }}
+        className="sticky bottom-3 z-30 bg-white/95 backdrop-blur-md p-2.5 sm:p-3 flex items-center justify-between gap-2"
+      >
+        {/* Left: Previous, Quit & Clear Buttons */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => {
               setCurrentIdx((p) => Math.max(0, p - 1));
               soundEngine.playPop();
             }}
             disabled={currentIdx === 0}
-            className="pearl-btn pearl-btn-ghost py-2.5 px-4 text-xs sm:text-sm font-bold disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+            style={{
+              borderRadius: '10px',
+              border: '1.5px solid #CBD5E1',
+            }}
+            className="px-3 sm:px-4 py-2 bg-white hover:bg-slate-100 disabled:opacity-40 text-slate-800 text-xs sm:text-sm font-bold flex items-center gap-1 cursor-pointer transition shadow-2xs"
           >
-            <ChevronLeft size={16} /> Previous
+            <ChevronLeft size={16} />
+            <span className="hidden xs:inline">Prev</span>
           </button>
+
+          {/* Clear Selection Button */}
+          {answers[currentQ.id] && (
+            <button
+              onClick={() => handleClearAnswer(currentQ.id)}
+              style={{
+                borderRadius: '10px',
+                border: '1.5px solid #FECDD3',
+              }}
+              className="px-2.5 sm:px-3 py-2 text-rose-700 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 text-xs font-bold transition cursor-pointer flex items-center gap-1 animate-fadeIn"
+              title="Clear selection for this question"
+            >
+              <span>✕</span>
+              <span>Clear</span>
+            </button>
+          )}
 
           <button
             onClick={handleQuit}
-            className="px-3 py-2 rounded-xl text-slate-500 hover:text-rose-700 hover:bg-rose-50 text-xs font-semibold transition cursor-pointer flex items-center gap-1 border border-transparent hover:border-rose-200"
+            className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-700 hover:bg-rose-50 text-xs font-semibold transition cursor-pointer hidden sm:flex items-center gap-1"
             title="Quit quiz"
           >
-            <span>Quit Quiz</span>
+            <span>Quit</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Center: Question indicator */}
+        <div className="text-xs font-bold text-slate-600 hidden md:block">
+          Q {currentIdx + 1} of {quiz.questions.length}
+        </div>
+
+        {/* Right: Submit / Next Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Early Submit button if partially answered */}
+          {unansweredCount > 0 && answeredCount >= 5 && currentIdx !== quiz.questions.length - 1 && (
+            <button
+              onClick={handleSubmit}
+              style={{
+                borderRadius: '10px',
+                border: '1.5px solid #CBD5E1',
+              }}
+              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer flex items-center gap-1"
+              title="Submit answered questions now"
+            >
+              <CheckCircle size={14} className="text-emerald-600" />
+              <span className="hidden sm:inline">Early Submit</span>
+              <span>({answeredCount})</span>
+            </button>
+          )}
+
           {currentIdx === quiz.questions.length - 1 ? (
             <button
               onClick={handleSubmit}
-              className="pearl-btn pearl-btn-emerald py-2.5 px-6 text-xs sm:text-sm font-bold shadow-lg flex items-center gap-1.5 cursor-pointer"
+              style={{
+                borderRadius: '10px',
+                backgroundColor: '#059669',
+                border: '1.5px solid #047857',
+              }}
+              className="px-5 py-2.5 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5 cursor-pointer transition"
             >
               <CheckCircle size={16} />
-              <span>Submit 50 MCQs Exam (جمع کرائیں)</span>
+              <span>Submit Exam ({answeredCount}/{quiz.questions.length})</span>
             </button>
           ) : (
-            <>
-              {unansweredCount > 0 && answeredCount >= 10 && (
-                <button
-                  onClick={handleSubmit}
-                  className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold border border-slate-300 transition cursor-pointer hidden sm:flex items-center gap-1"
-                  title="Submit current progress now"
-                >
-                  Early Submit ({answeredCount}/50)
-                </button>
-              )}
-              <button
-                onClick={() => {
-                  setCurrentIdx((p) => Math.min(quiz.questions.length - 1, p + 1));
-                  soundEngine.playPop();
-                }}
-                className="pearl-btn pearl-btn-lavender py-2.5 px-5 text-xs sm:text-sm font-bold flex items-center gap-1 shadow-md cursor-pointer"
-              >
-                <span>Next</span>
-                <ChevronRight size={16} />
-              </button>
-            </>
+            <button
+              onClick={() => {
+                setCurrentIdx((p) => Math.min(quiz.questions.length - 1, p + 1));
+                soundEngine.playPop();
+              }}
+              style={{
+                borderRadius: '10px',
+                backgroundColor: '#7C3AED',
+                border: '1.5px solid #6D28D9',
+              }}
+              className="px-4 sm:px-5 py-2.5 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5 cursor-pointer transition"
+            >
+              <span>Next</span>
+              <ChevronRight size={16} />
+            </button>
           )}
         </div>
       </div>

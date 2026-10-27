@@ -1,0 +1,101 @@
+/**
+ * Vercel Edge Function — Groq AI Proxy
+ * 
+ * This keeps the GROQ_API_KEY server-side only.
+ * The client calls /api/ai instead of calling Groq directly.
+ * 
+ * Deploy: The GROQ_API_KEY environment variable is set in Vercel Dashboard
+ *         (Settings → Environment Variables) — never in .env committed to git.
+ */
+export const config = { runtime: 'edge' };
+
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+export default async function handler(request: Request): Promise<Response> {
+  const allowed = [
+    'https://ceron-five.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:4173',
+  ];
+
+  // Allow requests from our production app, any Vercel preview deployment, and local dev
+  const origin = request.headers.get('origin') || '';
+  const host = request.headers.get('host') || '';
+  const isVercel = origin.endsWith('.vercel.app') || host.endsWith('.vercel.app');
+  const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1') || host.includes('localhost');
+  const isAllowed = !origin || isVercel || isLocalhost || allowed.includes(origin);
+
+  const corsHeaders: Record<string, string> = {
+    'Access-Control-Allow-Origin': isAllowed ? (origin || '*') : 'null',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Vary': 'Origin',
+  };
+
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Read the API key from server-side environment (never exposed to client)
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'API key not configured' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Forward to Groq with a 30-second timeout
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30_000);
+
+  try {
+    const groqRes = await fetch(GROQ_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    const data = await groqRes.json();
+    return new Response(JSON.stringify(data), {
+      status: groqRes.status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (err: unknown) {
+    clearTimeout(timeout);
+    const message = err instanceof Error ? err.message : 'Upstream request failed';
+    return new Response(JSON.stringify({ error: message }), {
+      status: 502,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
