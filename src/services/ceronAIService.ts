@@ -189,13 +189,14 @@ export class CeronAIService {
 
   /**
    * Builds headers for the AI request.
-   * In production: no Authorization header (proxy handles it server-side).
    * In development: includes key from .env.
+   * In production: includes key if available as a fallback for the server proxy.
    */
   private static getHeaders(): Record<string, string> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (!IS_PROD) {
-      headers['Authorization'] = `Bearer ${this.getApiKey()}`;
+    const key = this.getApiKey();
+    if (key && key.length > 20) {
+      headers['Authorization'] = `Bearer ${key}`;
     }
     return headers;
   }
@@ -215,6 +216,54 @@ export class CeronAIService {
       return await fetch(url, { ...options, signal: controller.signal });
     } finally {
       clearTimeout(timeoutId);
+    }
+  }
+
+  /**
+   * Resilient AI call executor with multi-tier fallback:
+   * 1. Try server proxy (/api/ai) which uses server GROQ_API_KEY.
+   * 2. If /api/ai fails (e.g. 500 "API key not configured" on Vercel) and client key exists:
+   *    Immediately retry directly against Groq API URL so users NEVER experience failure!
+   */
+  private static async postAIChat(body: Record<string, unknown>): Promise<Response> {
+    const key = this.getApiKey();
+    const primaryUrl = this.getEndpoint();
+    const headers = this.getHeaders();
+
+    try {
+      const res = await this.fetchWithTimeout(primaryUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      // If the proxy failed because server key was unconfigured (500) or proxy 404/502,
+      // and we have a client key, fallback to calling Groq directly!
+      if (!res.ok && res.status >= 500 && primaryUrl === PROXY_URL && key && key.length > 20) {
+        return await this.fetchWithTimeout(GROQ_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${key}`,
+          },
+          body: JSON.stringify(body),
+        });
+      }
+
+      return res;
+    } catch (err) {
+      // If network failed contacting proxy, fallback to direct Groq if key exists
+      if (primaryUrl === PROXY_URL && key && key.length > 20) {
+        return await this.fetchWithTimeout(GROQ_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${key}`,
+          },
+          body: JSON.stringify(body),
+        });
+      }
+      throw err;
     }
   }
 
@@ -250,23 +299,23 @@ export class CeronAIService {
     // Loop through available models in case one fails or has a temporary limit
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await this.fetchWithTimeout(this.getEndpoint(), {
-          method: 'POST',
-          headers: this.getHeaders(),
-          body: JSON.stringify({
-            model,
-            messages: [
-              { role: 'system', content: BISE_SWAT_SYSTEM_PROMPT },
-              { role: 'user', content: userPrompt },
-            ],
-            temperature: 0.3,
-            max_tokens: 3500,
-            response_format: { type: 'json_object' },
-          }),
+        const res = await this.postAIChat({
+          model,
+          messages: [
+            { role: 'system', content: BISE_SWAT_SYSTEM_PROMPT },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature: 0.3,
+          max_tokens: 3500,
+          response_format: { type: 'json_object' },
         });
 
         if (!res.ok) {
           const errBody = await res.text();
+          if (errBody.includes('API key not configured')) {
+            lastError = 'Groq API Key is not configured on the server. Please add GROQ_API_KEY to your Vercel Project Environment Variables (Settings → Environment Variables) or set VITE_GROQ_API_KEY in your .env.';
+            break;
+          }
           lastError = `Model ${model} returned ${res.status}: ${errBody}`;
           continue; // Try next model
         }
@@ -434,22 +483,22 @@ Ensure the tone is crystal clear and simple for beginners, with real-world analo
     let lastError = '';
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await this.fetchWithTimeout(this.getEndpoint(), {
-          method: 'POST',
-          headers: this.getHeaders(),
-          body: JSON.stringify({
-            model,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt },
-            ],
-            temperature: 0.3,
-            max_tokens: 8000,
-          }),
+        const res = await this.postAIChat({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature: 0.3,
+          max_tokens: 8000,
         });
 
         if (!res.ok) {
           const errBody = await res.text();
+          if (errBody.includes('API key not configured')) {
+            lastError = 'Groq API Key is not configured on the server. Please add GROQ_API_KEY to your Vercel Project Environment Variables.';
+            break;
+          }
           lastError = `Model ${model} returned ${res.status}: ${errBody}`;
           continue;
         }
@@ -566,14 +615,14 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
           requestBody.response_format = { type: 'json_object' };
         }
 
-        const res = await this.fetchWithTimeout(this.getEndpoint(), {
-          method: 'POST',
-          headers: this.getHeaders(),
-          body: JSON.stringify(requestBody),
-        });
+        const res = await this.postAIChat(requestBody);
 
         if (!res.ok) {
           const errBody = await res.text();
+          if (errBody.includes('API key not configured')) {
+            lastError = 'Groq API Key is not configured on the server. Please add GROQ_API_KEY in your Vercel Project Environment Variables.';
+            break;
+          }
           lastError = `Model ${model} returned ${res.status}: ${errBody}`;
           continue;
         }
@@ -642,67 +691,85 @@ Evaluate this student's answer strictly and fairly as a BISE Swat board examiner
     className: string,
     forceAIGenerate: boolean = false
   ): Promise<PaperCheckerQuestionsResult> {
-    // 1. If not forced to generate dynamically, check existing curriculum questions first
-    if (!forceAIGenerate && unit) {
-      const pastPapers: PastPaperQuestion[] = unit.pastPaperQuestions || [];
-      const solved: SolvedExerciseItem[] = unit.solvedExercises || [];
+    const pastPapers: PastPaperQuestion[] = unit?.pastPaperQuestions || [];
+    const solved: SolvedExerciseItem[] = unit?.solvedExercises || [];
 
-      const candidateShort = pastPapers.find((p) => p.marks <= 4 || /section b/i.test(p.section || ''))
-        || solved.find((s) => s.marks <= 4 || s.category === 'conceptual' || s.category === 'short_question');
+    const getQEn = (item: PastPaperQuestion | SolvedExerciseItem) =>
+      'questionEn' in item && item.questionEn ? item.questionEn : ('titleEn' in item ? item.titleEn : '');
+    const getQUr = (item: PastPaperQuestion | SolvedExerciseItem) =>
+      'questionUr' in item && item.questionUr ? item.questionUr : ('titleUr' in item && item.titleUr ? item.titleUr : '');
+    const getModelEn = (item: PastPaperQuestion | SolvedExerciseItem) =>
+      'modelAnswerEn' in item && item.modelAnswerEn ? item.modelAnswerEn : '';
+    const getModelUr = (item: PastPaperQuestion | SolvedExerciseItem) =>
+      'modelAnswerUr' in item && item.modelAnswerUr ? item.modelAnswerUr : '';
+    const getTip = (item: PastPaperQuestion | SolvedExerciseItem, fallback: string) =>
+      'boardTipEn' in item && item.boardTipEn ? item.boardTipEn : fallback;
 
-      const candidateLong = pastPapers.find((p) => p.marks >= 7 || /section c/i.test(p.section || ''))
-        || solved.find((s) => s.marks >= 7 || s.category === 'long_question' || s.category === 'numerical');
+    // Filter available short & long questions from the unit's rich past paper and exercise bank
+    const shortCandidates = [
+      ...pastPapers.filter((p) => p.marks <= 4 || /section b/i.test(p.section || '')),
+      ...solved.filter((s) => s.marks <= 4 || s.category === 'conceptual' || s.category === 'short_question'),
+    ].filter((item) => getQEn(item).trim().length > 0);
 
-      if (candidateShort && candidateLong) {
-        const getQEn = (item: PastPaperQuestion | SolvedExerciseItem) =>
-          'questionEn' in item && item.questionEn ? item.questionEn : ('titleEn' in item ? item.titleEn : '');
-        const getQUr = (item: PastPaperQuestion | SolvedExerciseItem) =>
-          'questionUr' in item && item.questionUr ? item.questionUr : ('titleUr' in item && item.titleUr ? item.titleUr : '');
-        const getModelEn = (item: PastPaperQuestion | SolvedExerciseItem) =>
-          'modelAnswerEn' in item && item.modelAnswerEn ? item.modelAnswerEn : '';
-        const getModelUr = (item: PastPaperQuestion | SolvedExerciseItem) =>
-          'modelAnswerUr' in item && item.modelAnswerUr ? item.modelAnswerUr : '';
-        const getTip = (item: PastPaperQuestion | SolvedExerciseItem, fallback: string) =>
-          'boardTipEn' in item && item.boardTipEn ? item.boardTipEn : fallback;
+    const longCandidates = [
+      ...pastPapers.filter((p) => p.marks >= 7 || /section c/i.test(p.section || '')),
+      ...solved.filter((s) => s.marks >= 7 || s.category === 'long_question' || s.category === 'numerical'),
+    ].filter((item) => getQEn(item).trim().length > 0);
 
-        return {
-          shortQ: {
-            id: 'curriculum-short-1',
-            type: 'short',
-            marks: 4,
-            section: 'Section B (Short Question - 4 Marks)',
-            questionEn: getQEn(candidateShort),
-            questionUr: getQUr(candidateShort),
-            modelAnswerEn: getModelEn(candidateShort),
-            modelAnswerUr: getModelUr(candidateShort),
-            boardTip: getTip(candidateShort, 'State 4 distinct technical points with proper terminology.'),
-          },
-          longQ: {
-            id: 'curriculum-long-1',
-            type: 'long',
-            marks: 8,
-            section: 'Section C (Extensive Question - 8 Marks)',
-            questionEn: getQEn(candidateLong),
-            questionUr: getQUr(candidateLong),
-            modelAnswerEn: getModelEn(candidateLong),
-            modelAnswerUr: getModelUr(candidateLong),
-            boardTip: getTip(candidateLong, 'Provide introduction, mathematical equation/diagram, mechanism, and conclusion.'),
-          },
-        };
-      }
+    // 1. On initial load (not forced), show first curriculum question
+    if (!forceAIGenerate && shortCandidates.length > 0 && longCandidates.length > 0) {
+      const candidateShort = shortCandidates[0];
+      const candidateLong = longCandidates[0];
+      const shortId = 'id' in candidateShort ? candidateShort.id : `q-${Date.now()}`;
+      const longId = 'id' in candidateLong ? candidateLong.id : `q-${Date.now()}`;
+      return {
+        shortQ: {
+          id: `curriculum-short-${shortId}`,
+          type: 'short',
+          marks: 4,
+          section: 'Section B (Short Question - 4 Marks)',
+          questionEn: getQEn(candidateShort),
+          questionUr: getQUr(candidateShort),
+          modelAnswerEn: getModelEn(candidateShort),
+          modelAnswerUr: getModelUr(candidateShort),
+          boardTip: getTip(candidateShort, 'State 4 distinct technical points with proper terminology.'),
+        },
+        longQ: {
+          id: `curriculum-long-${longId}`,
+          type: 'long',
+          marks: 8,
+          section: 'Section C (Extensive Question - 8 Marks)',
+          questionEn: getQEn(candidateLong),
+          questionUr: getQUr(candidateLong),
+          modelAnswerEn: getModelEn(candidateLong),
+          modelAnswerUr: getModelUr(candidateLong),
+          boardTip: getTip(candidateLong, 'Provide introduction, mathematical equation/diagram, mechanism, and conclusion.'),
+        },
+      };
     }
 
-    // 2. Dynamic AI Generation via Groq
-    const key = this.getApiKey();
-    if (this.isConfigured() && key) {
+    // 2. Dynamic AI Generation via Groq (with dynamic variation seeds so questions change EVERY time)
+    if (this.isConfigured()) {
+      const angles = [
+        'Focus on conceptual reasoning, real-world biological/physical applications, and critical analysis.',
+        'Focus on mathematical formulas, numerical relationships, or experimental demonstrations.',
+        'Focus on comparative mechanisms, structural diagram analysis, and textbook laws.',
+        'Focus on high-yield board past-paper style problem solving and examiner distinction points.',
+        'Focus on cause-and-effect scientific mechanisms and common student misconceptions in BISE exams.',
+      ];
+      const chosenAngle = angles[Math.floor(Math.random() * angles.length)];
+      const seed = Math.floor(Math.random() * 100000);
+
       const systemPrompt = `You are a Senior Paper Setter for the BISE Swat Board and Khyber Pakhtunkhwa Textbook Board (KPTBB).
-Generate TWO authentic, high-yield board examination questions for ${className}, Subject: ${subjectName}, Chapter: "${unit?.titleEn || 'Curriculum'}".
+Generate a UNIQUE and DIVERSE set of TWO authentic board examination questions for ${className}, Subject: ${subjectName}, Chapter: "${unit?.titleEn || 'Curriculum'}".
+${chosenAngle}
 
 REQUIREMENTS:
-1. Short Question (Section B): 4 Marks. Conceptual / reasoning / short derivation with 4 distinct marking points.
-2. Long Question (Section C): 8 Marks. In-depth extensive question requiring structured derivation, mechanism, or comprehensive explanation.
+1. Short Question (Section B): 4 Marks. Distinct technical question with 4 specific marking points.
+2. Long Question (Section C): 8 Marks. In-depth extensive question with structured derivation, mechanism, or comprehensive explanation.
 3. Include both English and Urdu translations for both questions.
 4. Include the complete official 100% textbook model answer for each question.
+5. Do NOT repeat generic questions. Ensure this is a distinct, high-yield question.
 
 You MUST respond in this EXACT valid JSON format ONLY:
 {
@@ -730,19 +797,15 @@ You MUST respond in this EXACT valid JSON format ONLY:
 
       for (const model of CANDIDATE_MODELS) {
         try {
-          const res = await this.fetchWithTimeout(this.getEndpoint(), {
-            method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify({
-              model,
-              messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: `Generate 2 board questions for Chapter: "${unit?.titleEn || 'Curriculum'}" in ${subjectName}.` },
-              ],
-              response_format: { type: 'json_object' },
-              temperature: 0.3,
-              max_tokens: 2500,
-            }),
+          const res = await this.postAIChat({
+            model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: `Generate 2 FRESH, DIFFERENT board examination questions for Chapter: "${unit?.titleEn || 'Curriculum'}" in ${subjectName}. (Variation Seed: ${seed}).` },
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.7,
+            max_tokens: 2500,
           });
 
           if (!res.ok) continue;
@@ -759,7 +822,7 @@ You MUST respond in this EXACT valid JSON format ONLY:
           if (parsed.shortQ?.questionEn && parsed.longQ?.questionEn) {
             return {
               shortQ: {
-                id: `ai-short-${Date.now()}`,
+                id: `ai-short-${Date.now()}-${seed}`,
                 type: 'short',
                 marks: 4,
                 section: 'Section B (Short Question - 4 Marks)',
@@ -771,7 +834,7 @@ You MUST respond in this EXACT valid JSON format ONLY:
                 boardTip: parsed.shortQ.boardTip || 'Answer with 4 distinct points to ensure full 4 marks.',
               },
               longQ: {
-                id: `ai-long-${Date.now()}`,
+                id: `ai-long-${Date.now()}-${seed}`,
                 type: 'long',
                 marks: 8,
                 section: 'Section C (Extensive Question - 8 Marks)',
@@ -790,16 +853,70 @@ You MUST respond in this EXACT valid JSON format ONLY:
       }
     }
 
-    // 3. Fallback High-Quality Synthesized Questions
+    // 3. Fallback: If AI is not reachable, cycle through available past papers and exercises!
+    if (shortCandidates.length > 1 || longCandidates.length > 1) {
+      const randomShort = shortCandidates[Math.floor(Math.random() * shortCandidates.length)];
+      const randomLong = longCandidates[Math.floor(Math.random() * longCandidates.length)];
+      const randomShortId = 'id' in randomShort ? randomShort.id : Math.random().toString(36).substring(2, 9);
+      const randomLongId = 'id' in randomLong ? randomLong.id : Math.random().toString(36).substring(2, 9);
+      return {
+        shortQ: {
+          id: `curriculum-short-${randomShortId}`,
+          type: 'short',
+          marks: 4,
+          section: 'Section B (Short Question - 4 Marks)',
+          questionEn: getQEn(randomShort),
+          questionUr: getQUr(randomShort),
+          modelAnswerEn: getModelEn(randomShort),
+          modelAnswerUr: getModelUr(randomShort),
+          boardTip: getTip(randomShort, 'State 4 distinct technical points with proper terminology.'),
+        },
+        longQ: {
+          id: `curriculum-long-${randomLongId}`,
+          type: 'long',
+          marks: 8,
+          section: 'Section C (Extensive Question - 8 Marks)',
+          questionEn: getQEn(randomLong),
+          questionUr: getQUr(randomLong),
+          modelAnswerEn: getModelEn(randomLong),
+          modelAnswerUr: getModelUr(randomLong),
+          boardTip: getTip(randomLong, 'Provide introduction, mathematical equation/diagram, mechanism, and conclusion.'),
+        },
+      };
+    }
+
+    // 3. Fallback High-Quality Synthesized Questions (with diverse dynamic variants)
     const chapterTitle = unit?.titleEn || 'General Science';
+    const fallbackVariants = [
+      {
+        shortEn: `Define the fundamental scientific principle of "${chapterTitle}" and state two practical applications tested in BISE Swat board examinations.`,
+        shortUr: `عنوان "${unit?.titleUr || chapterTitle}" کے بنیادی سائنسی اصول کی تعریف کریں اور دو عملی اطلاقات بیان کریں۔`,
+        longEn: `Explain in comprehensive detail the mechanism and mathematical derivation/theory of "${chapterTitle}". Draw or reference the relevant schematic diagram and discuss two limitations or conditions.`,
+        longUr: `موضوع "${unit?.titleUr || chapterTitle}" کے میکانزم اور مساوات کو تفصیل سے بیان کریں، ضروری ڈایاگرام کا حوالہ دیں اور شرائط واضح کریں۔`,
+      },
+      {
+        shortEn: `Differentiate between key concepts and governing factors in "${chapterTitle}". Provide 4 distinct points of distinction for BISE Swat Section B.`,
+        shortUr: `موضوع "${unit?.titleUr || chapterTitle}" کے کلیدی عوامل اور اصطلاحات میں فرق واضح کریں (چار امتحانی نکات)۔`,
+        longEn: `State the primary laws and equations governing "${chapterTitle}". Provide a step-by-step analytical derivation with labeled diagram and examiner pitfall warnings.`,
+        longUr: `عنوان "${unit?.titleUr || chapterTitle}" کے بنیادی قوانین اور مساوات کو مرحلہ وار ثابت کریں اور امتحانی انتباہات بیان کریں۔`,
+      },
+      {
+        shortEn: `Give scientific reasons for the phenomena observed in "${chapterTitle}". State two common pitfalls where students lose marks.`,
+        shortUr: `موضوع "${unit?.titleUr || chapterTitle}" کے سائنسی مظاہر کی وجوہات اور عام امتحانی غلطیوں کی وضاحت کریں۔`,
+        longEn: `Describe the experimental demonstration or practical application of "${chapterTitle}". Include all working steps, governing formulas, and formal board conclusion.`,
+        longUr: `عنوان "${unit?.titleUr || chapterTitle}" کے عملی مظاہرے یا اطلاق کی مرحلہ وار وضاحت کریں اور نتائج بیان کریں۔`,
+      },
+    ];
+    const chosenFallback = fallbackVariants[Math.floor(Math.random() * fallbackVariants.length)];
+
     return {
       shortQ: {
         id: `fallback-short-${Date.now()}`,
         type: 'short',
         marks: 4,
         section: 'Section B (Short Question - 4 Marks)',
-        questionEn: `Define the fundamental scientific principle of "${chapterTitle}" and state two practical applications tested in BISE Swat board examinations.`,
-        questionUr: `عنوان "${unit?.titleUr || chapterTitle}" کے بنیادی سائنسی اصول کی تعریف کریں اور دو عملی اطلاقات بیان کریں۔`,
+        questionEn: chosenFallback.shortEn,
+        questionUr: chosenFallback.shortUr,
         modelAnswerEn: `1. Formal Definition: Stated per standard KPTBB textbook definition with exact terminology.\n2. Governing Principle: Outlines the physical/biological mechanism.\n3. Application 1: Practical board-standard scenario.\n4. Application 2: Mathematical or everyday manifestation with SI units.`,
         modelAnswerUr: `تعریف، سائنسی وضاحت اور دو عملی اطلاقات کتب نصاب کے مطابق۔`,
         boardTip: 'Write clear sub-headings for Definition and Applications to secure all 4 marks.',
@@ -809,8 +926,8 @@ You MUST respond in this EXACT valid JSON format ONLY:
         type: 'long',
         marks: 8,
         section: 'Section C (Extensive Question - 8 Marks)',
-        questionEn: `Explain in comprehensive detail the mechanism and mathematical derivation/theory of "${chapterTitle}". Draw or reference the relevant schematic diagram and discuss two limitations or conditions.`,
-        questionUr: `موضوع "${unit?.titleUr || chapterTitle}" کے میکانزم اور مساوات کو تفصیل سے بیان کریں، ضروری ڈایاگرام کا حوالہ دیں اور شرائط واضح کریں۔`,
+        questionEn: chosenFallback.longEn,
+        questionUr: chosenFallback.longUr,
         modelAnswerEn: `1. Comprehensive Introduction & Scope (2 Marks)\n2. Theoretical Working & Mechanism (2 Marks)\n3. Mathematical Formula / Proof / Balanced Equation (2 Marks)\n4. Limitations, Conditions & Board Examination Summary (2 Marks)`,
         modelAnswerUr: `تفصیلی تعارف، سائنسی میکانزم، حسابی فارمولا اور امتحانی نتائج۔`,
         boardTip: 'Ensure a neat labeled diagram and state governing formulas in a distinct boxed highlight.',
@@ -865,22 +982,22 @@ ${isBiology
     let lastError = '';
     for (const model of CANDIDATE_MODELS) {
       try {
-        const res = await this.fetchWithTimeout(this.getEndpoint(), {
-          method: 'POST',
-          headers: this.getHeaders(),
-          body: JSON.stringify({
-            model,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt },
-            ],
-            temperature: 0.2,
-            max_tokens: 3000,
-          }),
+        const res = await this.postAIChat({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature: 0.2,
+          max_tokens: 3000,
         });
 
         if (!res.ok) {
           const errBody = await res.text();
+          if (errBody.includes('API key not configured')) {
+            lastError = 'Groq API Key is not configured on the server. Please add GROQ_API_KEY to your Vercel Project Environment Variables.';
+            break;
+          }
           lastError = `Model ${model} returned ${res.status}: ${errBody}`;
           continue;
         }

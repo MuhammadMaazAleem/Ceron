@@ -24,7 +24,7 @@ export default async function handler(request: Request): Promise<Response> {
   const corsHeaders: Record<string, string> = {
     'Access-Control-Allow-Origin': isAllowed ? (origin || '*') : 'null',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Vary': 'Origin',
   };
 
@@ -40,13 +40,26 @@ export default async function handler(request: Request): Promise<Response> {
     });
   }
 
-  // Read the API key from server-side environment (never exposed to client)
-  const apiKey = process.env.GROQ_API_KEY;
+  // 1. Try server environment variables (GROQ_API_KEY or VITE_GROQ_API_KEY)
+  // 2. Fall back to Authorization header sent by client if server env is missing
+  const authHeader = request.headers.get('authorization') || request.headers.get('Authorization') || '';
+  const clientKey = authHeader.replace(/^Bearer\s+/i, '').trim();
+  const apiKey =
+    process.env.GROQ_API_KEY ||
+    process.env.VITE_GROQ_API_KEY ||
+    (clientKey.length > 20 && clientKey !== 'your_groq_api_key_here' ? clientKey : '');
+
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'API key not configured' }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        error:
+          'API key not configured. Please add GROQ_API_KEY in your Vercel Project Settings (Settings → Environment Variables).',
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   let body: unknown;
